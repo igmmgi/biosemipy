@@ -8,7 +8,7 @@ from numba import jit
 class BDF(object):
     """BioSemi Data Class"""
 
-    def __init__(self, fname, hdr_only=False, chans=None, use_numba=True):
+    def __init__(self, fname, hdr_only=False, chans=None):
         """
         Read BioSemi EEG datafile header plus data (default)
         See https://www.biosemi.com/faq_file_format.htm for details
@@ -16,7 +16,6 @@ class BDF(object):
         :param fname: str
         :param hdr_only: bool (default: True)
         :param chans: list (default: all channels)
-        :param use_numba: bool (default: True)
         """
 
         self.fname = fname
@@ -56,7 +55,7 @@ class BDF(object):
                                     self.hdr["dur_recs"]) for i in ch]
 
             if not hdr_only:
-                self._get_data(f, chans, use_numba=use_numba)
+                self._read(f, chans)
 
     def __str__(self):
         """
@@ -72,7 +71,7 @@ class BDF(object):
     def __repr__(self):
         return self.__str__()
 
-    def _get_data(self, f, chans, use_numba=True):
+    def _read(self, f, chans):
 
         if not chans:  # read all channels
             chans = list(range(self.hdr["n_chans"]))
@@ -80,64 +79,25 @@ class BDF(object):
             chans = self.channel_idx(chans)
 
         bdf_dat = np.fromfile(f, dtype=np.dtype("uint8"))
-        if use_numba:
-            self._bdf2matrix_numba(bdf_dat, chans)
-        else:
-            self._bdf2matrix_numpy(bdf_dat, chans)
 
+        self._bdf2matrix(bdf_dat, chans)
         self._trigger_info()
         self.time = np.arange(0, np.size(self.data, 1)) / self.hdr["freq"][0]
         self._update_header(chans)
 
-    def _bdf2matrix_numba(self, bdf_dat, chans):
+    def _bdf2matrix(self, bdf_dat, chans):
 
         n_chans = self.hdr["n_chans"]
         n_recs = self.hdr["n_recs"]
         n_samps = self.hdr["n_samps"][0]
         scale = self.hdr["scale"]
 
-        data, trig, status = _bdf2matrix_numba(bdf_dat, scale, chans,
-                                               n_chans, n_recs, n_samps)
+        data, trig, status = _bdf2matrix(bdf_dat, scale, chans,
+                                         n_chans, n_recs, n_samps)
 
         self.data = data
         self.trig = {"raw": trig}
         self.status = status
-
-    def _bdf2matrix_numpy(self, bdf_dat, chans):
-        """
-        Take remaining data in bdf_dat and assign to n channels by
-        n time points numpy matrix. (NB. numba equivalent function
-        should be faster.)
-        """
-
-        n_chans = self.hdr["n_chans"]
-        n_recs = self.hdr["n_recs"]
-        n_samps = self.hdr["n_samps"][0]
-        scale = self.hdr["scale"]
-
-        self.data = np.zeros((len(chans) - 1, n_recs * n_samps),
-                             dtype=np.float32)
-
-        p1 = n_samps * 3
-        p2 = p1 * n_chans * n_recs
-        ch_count = 0
-        for ch in chans[:-1]:
-            start = np.arange(ch * p1, p2, n_chans * p1)
-            idx = np.add.outer(start, np.arange(p1))
-
-            # channel data
-            cd = bdf_dat[idx].reshape(-1, 3).astype(np.int32)
-            cd = (cd[:, 0] << 8 | (cd[:, 1] << 16) | (-(-cd[:, 2] << 24))) >> 8
-            self.data[ch_count, :] = cd.astype(np.float32) * scale[ch]
-            ch_count += 1
-
-        # trigger data
-        start = np.arange((n_chans - 1) * p1, p2, n_chans * p1)
-        idx = np.add.outer(start, np.arange(p1))
-        cd = bdf_dat[idx].reshape(-1, 3).astype(np.int16)
-
-        self.trig = {"raw": (cd[:, 0] | cd[:, 1] << 8)}
-        self.status = cd[:, 2]
 
     def _update_header(self, chans):
         """
@@ -219,7 +179,7 @@ class BDF(object):
 
 
 @jit(nopython=True)
-def _bdf2matrix_numba(bdf_dat, scale, chans, n_chans, n_recs, n_samps):
+def _bdf2matrix(bdf_dat, scale, chans, n_chans, n_recs, n_samps):
     """
     Take remaining data in bdf_dat and assign to n channels by
     n time points numpy matrix.
