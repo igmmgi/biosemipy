@@ -1,5 +1,6 @@
-"""Basic unittests for biosemipy"""
+"""unittests for biosemipy"""
 
+import os
 import unittest
 import numpy as np
 from biosemipy.bdf import BDF
@@ -8,8 +9,8 @@ from biosemipy.bdf import BDF
 class BDFTestCase(unittest.TestCase):
     """Tests for BDF"""
 
-    def test_bdf1(self):
-        """Newtest17-256 read"""
+    def test_read256(self):
+        """Newtest17-256: read"""
 
         dat = BDF("Newtest17-256.bdf")
 
@@ -22,8 +23,8 @@ class BDFTestCase(unittest.TestCase):
         self.assertEqual(dat.trig["val"][0], 255)
         self.assertEqual(dat.trig["count"][255], 40)
 
-    def test_bdf2(self):
-        """Newtest17-256 read header only"""
+    def test_read256_hdr_only(self):
+        """Newtest17-256: read header"""
 
         dat = BDF("Newtest17-256.bdf", hdr_only=True)
 
@@ -35,8 +36,8 @@ class BDFTestCase(unittest.TestCase):
         self.assertIsNone(dat.trig)
         self.assertIsNone(dat.status)
 
-    def test_bdf3(self):
-        """Newtest17-256 read specific channels only"""
+    def test_read256_chans(self):
+        """Newtest17-256: read specific channels"""
 
         dat1 = BDF("Newtest17-256.bdf")
         dat2 = BDF("Newtest17-256.bdf", chans=[1, 3, 5])
@@ -70,8 +71,8 @@ class BDFTestCase(unittest.TestCase):
         self.assertEqual(dat2.hdr["freq"][0], 256)
         self.assertEqual(dat3.hdr["freq"][0], 256)
 
-    def test_bdf4(self):
-        """Newtest17-2048 read"""
+    def test_read2048(self):
+        """Newtest17-2048: read"""
 
         dat = BDF("Newtest17-2048.bdf")
 
@@ -84,8 +85,8 @@ class BDFTestCase(unittest.TestCase):
         self.assertEqual(dat.trig["val"][0], 255)
         self.assertEqual(dat.trig["count"][255], 39)
 
-    def test_bdf5(self):
-        """Newtest17-2048 read header only"""
+    def test_read2048_hdr_only(self):
+        """Newtest17-2048: read header"""
 
         dat = BDF("Newtest17-2048.bdf", hdr_only=True)
 
@@ -97,8 +98,8 @@ class BDFTestCase(unittest.TestCase):
         self.assertIsNone(dat.trig)
         self.assertIsNone(dat.status)
 
-    def test_bdf6(self):
-        """Newtest17-2048 read specific channels only"""
+    def test_read2048_chans(self):
+        """Newtest17-2048: read specific channels"""
 
         dat1 = BDF("Newtest17-2048.bdf")
         dat2 = BDF("Newtest17-2048.bdf", chans=[1, 3, 5])
@@ -127,3 +128,24 @@ class BDFTestCase(unittest.TestCase):
 
         self.assertEqual(dat2.hdr["freq"][0], 2048)
         self.assertEqual(dat3.hdr["freq"][0], 2048)
+
+    def test_write256(self):
+        """Newtest17-256.bdf: write"""
+
+        dat1 = BDF("Newtest17-256.bdf")
+        dat1.write("test.bdf")
+        dat2 = BDF("test.bdf")
+        os.remove("test.bdf")
+
+        self.assertTrue(np.all(dat1.data == dat2.data))
+
+    def test_write2048(self):
+        """Newtest17-256.bdf: write"""
+
+        dat1 = BDF("Newtest17-2048.bdf")
+        dat1.write("test.bdf")
+        dat2 = BDF("test.bdf")
+        os.remove("test.bdf")
+
+        self.assertTrue(np.all(dat1.data == dat2.data))
+
