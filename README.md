@@ -9,11 +9,11 @@ cd biosemipy
 pip install -e biosemipy
 
 ## Methods
-read
-write
-merge
-delete_channels
-select_channels
+read \
+write \
+merge \
+delete_channels \
+select_channels 
 
 ## Basic Example 
 ```python

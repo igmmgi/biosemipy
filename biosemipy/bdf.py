@@ -5,7 +5,7 @@ import numpy as np
 from numba import jit
 
 
-class BDF(object):
+class BDF():
     """BioSemi Data Class"""
 
     def __init__(self, fname=None, hdr_only=False, chans=None):
@@ -246,6 +246,7 @@ def _bdf2matrix(bdf_dat, chans, scale, n_chans, n_recs, n_samps):
     Take remaining data in bdf_dat and assign to n channels by
     n time points numpy matrix.
     """
+
     data = np.zeros((len(chans) - 1, n_recs * n_samps), dtype=np.float32)
     trig = np.zeros(n_recs * n_samps, dtype=np.int16)
     status = np.zeros(n_recs * n_samps, dtype=np.int16)
