@@ -5,7 +5,7 @@ import numpy as np
 from numba import jit
 
 
-class BDF():
+class BDF:
     """BioSemi Data Class"""
 
     def __init__(self, fname=None, hdr_only=False, chans=None):
