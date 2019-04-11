@@ -1,5 +1,6 @@
 # biosemipy 
-Python code for BioSemi 24 bit EEG files.
+Python code for BioSemi 24 bit EEG files. A dataviewer written in PyQt5/pyqtgraph
+allows visualisation of the datafiles. 
 
 ## Installation
 git clone https://github.com/igmmgi/DMCpython.git 
@@ -14,7 +15,7 @@ write \
 merge \
 crop \
 delete_channels \
-select_channels 
+select_channels \
 channel_difference 
 
 + dataviewer
@@ -33,6 +34,7 @@ dat1.write()
 # dataviewer class
 from biosemipy import dataviewer
 dataviewer.run()
+# or
 dataviewer.run("filename.bdf")
 
 ```
