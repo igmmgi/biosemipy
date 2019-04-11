@@ -1,2 +1,5 @@
+PyQt5
+matplotlib
 numba
 numpy
+pyqtgraph
