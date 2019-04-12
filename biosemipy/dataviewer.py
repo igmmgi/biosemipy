@@ -309,22 +309,27 @@ class DataViewer(QMainWindow):
 
     def on_crop_file_clicked(self):
 
+        if self.fname is None:
+            return
+
         selection = Crop(self.events["count"], self.bdf.hdr["n_recs"],
                          parent=self)
         selection.show()
         if selection.exec_():
             crop_type, val1, val2 = selection.get_selection()
 
-        self.fname = self.fname[:-4] + "_cropped" + ".bdf"
-        self.bdf.crop(self.fname, crop_type, [val1, val2])
-
-        self.data = self.bdf.data
-        self.set_sliders()
-        self.set_plot()
-        self.update_plot()
+            self.fname = self.fname[:-4] + "_cropped" + ".bdf"
+            self.bdf.crop(self.fname, crop_type, [val1, val2])
+            self.data = self.bdf.data
+            self.set_sliders()
+            self.set_plot()
+            self.update_plot()
 
     def on_channel_select_action(self):
         """ Display specific channels. All channels remain in data. """
+
+        if self.fname is None:
+            return
 
         selection = ChannelSelection(self.labels_selected, parent=self)
         selection.show()
@@ -346,6 +351,9 @@ class DataViewer(QMainWindow):
 
     def on_channel_delete_action(self):
         """ Delete specific channels. """
+
+        if self.fname is None:
+            return
 
         selection = ChannelSelection(self.labels_selected, parent=self)
         selection.show()
@@ -374,6 +382,9 @@ class DataViewer(QMainWindow):
     def on_channel_difference_action(self):
         """ Calculate difference between (+ append) selected channels. """
 
+        if self.fname is None:
+            return
+
         selection = ChannelDifference(self.labels_selected, parent=self)
         selection.show()
         if selection.exec_():
@@ -395,6 +406,9 @@ class DataViewer(QMainWindow):
 
     def on_write_file_clicked(self):
         """ Write data to *.bdf file. """
+
+        if self.fname is None:
+            return
 
         file = QFileDialog.getSaveFileName(self,
                                            "Save file",
@@ -418,12 +432,14 @@ class DataViewer(QMainWindow):
                 for filename in filenames:
                     self.fname.append(filename)
             self.read_bdf_file()
-
-        self.set_plot()
-        self.update_plot()
+            self.set_plot()
+            self.update_plot()
 
     def on_y_demean(self):
         """ Set y-scale demean on/off. """
+
+        if self.fname is None:
+            return
 
         self.scale["y_demean"] = not self.scale["y_demean"]
         if self.scale["y_demean"]:
@@ -434,6 +450,9 @@ class DataViewer(QMainWindow):
 
     def on_toggle_cursor_clicked(self):
         """ Toggle cursor on/off. """
+
+        if self.fname is None:
+            return
 
         self.cursor_on = not self.cursor_on
 
@@ -481,6 +500,9 @@ class DataViewer(QMainWindow):
     def on_y_spacing_factor_slider(self):
         """ Set y-scale spacing. """
 
+        if self.fname is None:
+            return
+
         self.scale["yspacing_factor"] = self.gui.y_spacing_factor_slider.value()
         yrange = np.ptp(self.scale["yoffset"])
         self.gui.y_spacing_offset_slider.setMinimum(-yrange/2)
@@ -492,6 +514,9 @@ class DataViewer(QMainWindow):
     def on_y_spacing_offset_slider(self):
         """ Set y-scale offset. """
 
+        if self.fname is None:
+            return
+
         self.scale["yspacing_offset"] = self.gui.y_spacing_offset_slider.value()
         self.gui.y_spacing_offset_slider.setValue(self.scale["yspacing_offset"])
         self.set_plot()
@@ -499,6 +524,9 @@ class DataViewer(QMainWindow):
 
     def on_y_spacing_clicked(self, val):
         """ Set y-scale spacing. """
+
+        if self.fname is None:
+            return
 
         self.scale["yspacing_factor"] += val
         self.gui.y_spacing_factor_slider.blockSignals(True)
@@ -552,12 +580,18 @@ class DataViewer(QMainWindow):
     def on_y_scale_type_clicked(self):
         """ Change y-scale type (vertical vs. butterfly). """
 
+        if self.fname is None:
+            return
+
         self.scale["type"].rotate(1)
         self.set_plot()
         self.update_plot()
 
     def on_y_scale_clicked(self, val):
         """ Change y-scale. """
+
+        if self.fname is None:
+            return
 
         if 0 >= self.scale["ymin"] >= -5000:
             self.scale["ymin"] -= val
@@ -586,6 +620,9 @@ class DataViewer(QMainWindow):
     def on_y_scale_slider(self):
         """ Change y-scale. """
 
+        if self.fname is None:
+            return
+
         self.scale["ymin"] = self.gui.y_scale_slider.value()
         self.scale["ymax"] = -self.gui.y_scale_slider.value()
         self.scale["yrange"] = self.scale["ymax"] - self.scale["ymin"]
@@ -595,6 +632,9 @@ class DataViewer(QMainWindow):
 
     def on_x_scale_clicked(self, val):
         """ Change x-scale. """
+
+        if self.fname is None:
+            return
 
         self.scale["xmax"] += val
         if self.scale["xmax"] <= self.scale["xmin"]:
@@ -608,6 +648,9 @@ class DataViewer(QMainWindow):
     def on_x_scale_slider(self):
         """ Change x-scale. """
 
+        if self.fname is None:
+            return
+
         self.scale["xmax"] = self.scale["xmin"] + self.gui.x_scale_slider.value()
         if self.scale["xmax"] <= self.scale["xmin"]:
             self.scale["xmax"] = self.scale["xmin"] + 10
@@ -619,6 +662,9 @@ class DataViewer(QMainWindow):
     def on_x_scroll_clicked(self):
         """ Toggle on/off x-scale scroll. """
 
+        if self.fname is None:
+            return
+
         self.scale["x_scroll"] = not self.scale["x_scroll"]
         if self.scale["x_scroll"]:
             self.gui.x_scroll.setText("X Scroll Auto (off)")
@@ -629,6 +675,9 @@ class DataViewer(QMainWindow):
 
     def on_x_scroll_pos_slider(self):
         """ Change x-scale position"""
+
+        if self.fname is None:
+            return
 
         self.scale["xmin"] = self.gui.x_scroll_pos_slider.value()
         self.scale["xmax"] = self.gui.x_scroll_pos_slider.value() + self.scale["xrange"]
@@ -642,6 +691,9 @@ class DataViewer(QMainWindow):
     def on_x_scroll_speed_clicked(self, val):
         """ Change x-scalle scroll speed. """
 
+        if self.fname is None:
+            return
+
         self.scale["x_scroll_speed"] += val
         self.gui.x_scroll_speed_slider.blockSignals(True)
         self.gui.x_scroll_speed_slider.setValue(self.scale["xmax"])
@@ -651,6 +703,9 @@ class DataViewer(QMainWindow):
 
     def on_x_scroll_speed_slider(self):
         """ Change x-scalle scroll speed. """
+
+        if self.fname is None:
+            return
 
         self.scale["x_scroll_speed"] = self.gui.x_scroll_speed_slider.value()
         self.update_plot()
@@ -672,6 +727,9 @@ class DataViewer(QMainWindow):
     def on_toggle_events_clicked(self):
         """ Toggle on/off show/hide events in main plot window. """
 
+        if self.fname is None:
+            return
+
         self.plot_events = not self.plot_events
         if self.plot_events:
             self.gui.toggle_events.setText("Hide Events")
@@ -684,11 +742,17 @@ class DataViewer(QMainWindow):
     def on_events_info_clicked(self):
         """ Display summary (value: count) of events in *.bdf file. """
 
+        if self.fname is None:
+            return
+
         events = EventsTable(self.events["count"], parent=self)
         events.show()
 
     def on_x_region_clicked(self):
         """ Toggle on/off x region selection. """
+
+        if self.fname is None:
+            return
 
         self.x_region_on = not self.x_region_on
         if self.x_region_on:
@@ -700,6 +764,9 @@ class DataViewer(QMainWindow):
 
     def on_reset_clicked(self):
         """ Reset plot. """
+
+        if self.fname is None:
+            return
 
         self.scale = self.set_scale()
         self.channel_selection = []
@@ -715,6 +782,9 @@ class DataViewer(QMainWindow):
 
     def on_channel_selection(self):
         """ Select/show specific channels only. """
+
+        if self.fname is None:
+            return
 
         self.channel_selection = []
         for selection in self.gui.channel_selection.selectedItems():
@@ -913,6 +983,7 @@ class DataViewer(QMainWindow):
         if ok and item:
             self.colourmap = item
             self.colours = cm.get_cmap(self.colourmap)
+        if self.fname is not None:
             self.set_plot()
             self.update_plot()
 
@@ -924,8 +995,11 @@ class DataViewer(QMainWindow):
         self.gui.layout.removeWidget(self.gui.plot)
         self.gui.plot = pg.PlotWidget(enableMenu=False)
         self.gui.layout.insertWidget(0, self.gui.plot)
-        self.set_plot()
-        self.update_plot()
+        if self.fname is None:
+            self.set_plot_blank()
+        else:
+            self.set_plot()
+            self.update_plot()
 
     def select_font_size(self):
         """ Change the text fontsize. """
@@ -938,6 +1012,7 @@ class DataViewer(QMainWindow):
 
         if ok and font_size:
             self.font.setPointSize(int(font_size))
+        if self.fname is not None:
             self.set_plot()
             self.update_plot()
 
@@ -952,6 +1027,7 @@ class DataViewer(QMainWindow):
 
         if ok and line_width:
             self.line_width = float(line_width)
+        if self.fname is not None:
             self.set_plot()
             self.update_plot()
 
