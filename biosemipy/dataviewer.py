@@ -44,6 +44,7 @@ class DataViewer(QMainWindow):
         self.proxy = None
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_plot)
+        self.qt_connections = False
 
         # cursor for selected channel
         self.channel_selected = None
@@ -82,17 +83,16 @@ class DataViewer(QMainWindow):
 
         if self.fname:
             self.read_bdf_file()
-
-        self.setWindowTitle("Data Viewer")
-        self.setGeometry(0, 0, 1920, 1080)
-        self.qt_connections()
-        self.set_menubar()
-
-        if self.fname:
+            self.set_menubar(file_loaded=True)
+            self.set_qt_connections(connect=True)
             self.set_plot()
             self.update_plot()
         else:
+            self.set_menubar(file_loaded=False)
             self.set_plot_blank()
+
+        self.setWindowTitle("Data Viewer")
+        self.setGeometry(0, 0, 1920, 1080)
 
     def set_slider_values(self):
         """ Set appripriate min/max values for x/y-scale sliders. """
@@ -159,6 +159,9 @@ class DataViewer(QMainWindow):
         self.set_slider_values()
         self.set_selection_labels()
 
+        self.set_menubar(file_loaded=True)
+        self.set_qt_connections(connect=True)
+
     def read_bdf_files(self):
         """ Read multiple *.bdf files. """
 
@@ -189,56 +192,90 @@ class DataViewer(QMainWindow):
                      "xmin": 0, "xmax": 500, "xrange": 500,
                      "x_scroll": False, "x_scroll_speed": 10})
 
-    def qt_connections(self):
+    def set_qt_connections(self, connect=False):
         """ Connect qt gui buttons/sliders to appropriate functions. """
 
-        # y-scale
-        self.gui.y_scale_type.clicked.connect(self.on_y_scale_type_clicked)
-        self.gui.y_scale_dec.setAutoRepeat(True)
-        self.gui.y_scale_dec.clicked.connect(partial(self.on_y_scale_clicked, 50))
-        self.gui.y_scale_inc.setAutoRepeat(True)
-        self.gui.y_scale_inc.clicked.connect(partial(self.on_y_scale_clicked, -50))
-        self.gui.y_scale_slider.valueChanged.connect(self.on_y_scale_slider)
+        if connect:
 
-        # self.gui.y_spacing_factor_slider
-        self.gui.y_spacing_dec.clicked.connect(partial(self.on_y_spacing_clicked, -0.1))
-        self.gui.y_spacing_dec.setAutoRepeat(True)
-        self.gui.y_spacing_inc.clicked.connect(partial(self.on_y_spacing_clicked, 0.1))
-        self.gui.y_spacing_inc.setAutoRepeat(True)
-        self.gui.y_spacing_factor_slider.valueChanged.connect(self.on_y_spacing_factor_slider)
-        self.gui.y_spacing_offset_slider.valueChanged.connect(self.on_y_spacing_offset_slider)
+            # y-scale
+            self.gui.y_scale_type.clicked.connect(self.on_y_scale_type_clicked)
+            self.gui.y_scale_dec.clicked.connect(partial(self.on_y_scale_clicked, 50))
+            self.gui.y_scale_inc.clicked.connect(partial(self.on_y_scale_clicked, -50))
+            self.gui.y_scale_slider.valueChanged.connect(self.on_y_scale_slider)
 
-        self.gui.y_demean.clicked.connect(self.on_y_demean)
+            # self.gui.y_spacing_factor_slider
+            self.gui.y_spacing_dec.clicked.connect(partial(self.on_y_spacing_clicked, -0.1))
+            self.gui.y_spacing_inc.clicked.connect(partial(self.on_y_spacing_clicked, 0.1))
+            self.gui.y_spacing_factor_slider.valueChanged.connect(self.on_y_spacing_factor_slider)
+            self.gui.y_spacing_offset_slider.valueChanged.connect(self.on_y_spacing_offset_slider)
+            self.gui.y_demean.clicked.connect(self.on_y_demean)
 
-        # x-scale
-        self.gui.x_scale_dec.clicked.connect(partial(self.on_x_scale_clicked, -10))
-        self.gui.x_scale_dec.setAutoRepeat(True)
-        self.gui.x_scale_inc.clicked.connect(partial(self.on_x_scale_clicked, 10))
-        self.gui.x_scale_inc.setAutoRepeat(True)
-        self.gui.x_scale_slider.valueChanged.connect(self.on_x_scale_slider)
-        self.gui.x_scroll.clicked.connect(self.on_x_scroll_clicked)
-        self.gui.x_scroll.setAutoRepeat(True)
-        self.gui.x_scroll_pos_slider.valueChanged.connect(self.on_x_scroll_pos_slider)
+            # x-scale
+            self.gui.x_scale_dec.clicked.connect(partial(self.on_x_scale_clicked, -10))
+            self.gui.x_scale_inc.clicked.connect(partial(self.on_x_scale_clicked, 10))
+            self.gui.x_scale_slider.valueChanged.connect(self.on_x_scale_slider)
+            self.gui.x_scroll.clicked.connect(self.on_x_scroll_clicked)
+            self.gui.x_scroll_pos_slider.valueChanged.connect(self.on_x_scroll_pos_slider)
+            self.gui.x_scroll_speed_dec.clicked.connect(partial(self.on_x_scroll_speed_clicked, -5))
+            self.gui.x_scroll_speed_inc.clicked.connect(partial(self.on_x_scroll_speed_clicked, 5))
+            self.gui.x_scroll_speed_slider.valueChanged.connect(self.on_x_scroll_speed_slider)
 
-        self.gui.x_scroll_speed_dec.clicked.connect(partial(self.on_x_scroll_speed_clicked, -5))
-        self.gui.x_scroll_speed_dec.setAutoRepeat(True)
-        self.gui.x_scroll_speed_inc.clicked.connect(partial(self.on_x_scroll_speed_clicked, 5))
-        self.gui.x_scroll_speed_inc.setAutoRepeat(True)
-        self.gui.x_scroll_speed_slider.valueChanged.connect(self.on_x_scroll_speed_slider)
+            # channel selection/ region / events / cursor / reset
+            self.gui.channel_selection.itemSelectionChanged.connect(self.on_channel_selection)
+            self.gui.x_region.clicked.connect(self.on_x_region_clicked)
+            self.gui.toggle_events.clicked.connect(self.on_toggle_events_clicked)
+            self.gui.toggle_cursor.clicked.connect(self.on_toggle_cursor_clicked)
+            self.gui.reset.clicked.connect(self.on_reset_clicked)
 
-        # channel selection/ region / events / cursor / reset
-        self.gui.channel_selection.itemSelectionChanged.connect(self.on_channel_selection)
-        self.gui.x_region.clicked.connect(self.on_x_region_clicked)
-        self.gui.toggle_events.clicked.connect(self.on_toggle_events_clicked)
-        self.gui.toggle_cursor.clicked.connect(self.on_toggle_cursor_clicked)
-        self.gui.reset.clicked.connect(self.on_reset_clicked)
+        else:
 
-    def set_menubar(self):
-        """ Add menubar and actions to main window. """
+            # y-scale
+            self.gui.y_scale_type.clicked.disconnect()
+            self.gui.y_scale_dec.clicked.disconnect()
+            self.gui.y_scale_inc.clicked.disconnect()
+            self.gui.y_scale_slider.valueChanged.disconnect()
 
-        # Window Menubar
+            # self.gui.y_spacing_factor_slider
+            self.gui.y_spacing_dec.clicked.disconnect()
+            self.gui.y_spacing_inc.clicked.disconnect()
+            self.gui.y_spacing_factor_slider.valueChanged.disconnect()
+            self.gui.y_spacing_offset_slider.valueChanged.disconnect()
+            self.gui.y_demean.clicked.disconnect()
+
+            # x-scale
+            self.gui.x_scale_dec.clicked.disconnect()
+            self.gui.x_scale_inc.clicked.disconnect()
+            self.gui.x_scale_slider.valueChanged.disconnect()
+            self.gui.x_scroll.clicked.disconnect()
+            self.gui.x_scroll_pos_slider.valueChanged.disconnect()
+            self.gui.x_scroll_speed_dec.clicked.disconnect()
+            self.gui.x_scroll_speed_inc.clicked.disconnect()
+            self.gui.x_scroll_speed_slider.valueChanged.disconnect()
+
+            # channel selection/ region / events / cursor / reset
+            self.gui.channel_selection.itemSelectionChanged.disconnect()
+            self.gui.x_region.clicked.disconnect()
+            self.gui.toggle_events.clicked.disconnect()
+            self.gui.toggle_cursor.clicked.disconnect()
+            self.gui.reset.clicked.disconnect()
+
+    def set_menubar(self, file_loaded=False):
+        """
+        Add menubar to main window. Additional options only added when
+        file is loaded.
+        """
+
+        menu_bar = self.menuBar()
+        menu_bar.clear()
+
         read_bdf_action = QAction('&Read BDF File', self)
         read_bdf_action.triggered.connect(self.select_bdf_file)
+
+        file_menu = menu_bar.addMenu('&File')
+        file_menu.addAction(read_bdf_action)
+
+        if not file_loaded:
+            return
 
         merge_file_action = QAction('&Merge BDF Files', self)
         merge_file_action.triggered.connect(self.on_merge_file_clicked)
@@ -281,11 +318,6 @@ class DataViewer(QMainWindow):
         line_size_action = QAction('&Line Width (select)', self)
         line_size_action.triggered.connect(self.select_line_width)
 
-        # Create menu bar and add action
-        menu_bar = self.menuBar()
-
-        file_menu = menu_bar.addMenu('&File')
-        file_menu.addAction(read_bdf_action)
         file_menu.addAction(merge_file_action)
         file_menu.addAction(write_file_action)
         file_menu.addAction(crop_file_action)
@@ -309,9 +341,6 @@ class DataViewer(QMainWindow):
 
     def on_crop_file_clicked(self):
 
-        if self.fname is None:
-            return
-
         selection = Crop(self.events["count"], self.bdf.hdr["n_recs"],
                          parent=self)
         selection.show()
@@ -327,9 +356,6 @@ class DataViewer(QMainWindow):
 
     def on_channel_select_action(self):
         """ Display specific channels. All channels remain in data. """
-
-        if self.fname is None:
-            return
 
         selection = ChannelSelection(self.labels_selected, parent=self)
         selection.show()
@@ -351,9 +377,6 @@ class DataViewer(QMainWindow):
 
     def on_channel_delete_action(self):
         """ Delete specific channels. """
-
-        if self.fname is None:
-            return
 
         selection = ChannelSelection(self.labels_selected, parent=self)
         selection.show()
@@ -382,33 +405,27 @@ class DataViewer(QMainWindow):
     def on_channel_difference_action(self):
         """ Calculate difference between (+ append) selected channels. """
 
-        if self.fname is None:
-            return
-
         selection = ChannelDifference(self.labels_selected, parent=self)
         selection.show()
         if selection.exec_():
             chan1, chan2, label = selection.get_selection()
 
-        self.bdf.channel_difference([chan1], [chan2], label)
+            self.bdf.channel_difference([chan1], [chan2], label)
 
-        # update channel info
-        self.channel_selection.append(self.n_channels)
-        self.n_channels += 1
+            # update channel info
+            self.channel_selection.append(self.n_channels)
+            self.n_channels += 1
 
-        self.data = self.bdf.data
-        self.labels_org.append(label)
-        self.labels_selected.append(label)
+            self.data = self.bdf.data
+            self.labels_org.append(label)
+            self.labels_selected.append(label)
 
-        self.set_selection_labels()
-        self.set_plot()
-        self.update_plot()
+            self.set_selection_labels()
+            self.set_plot()
+            self.update_plot()
 
     def on_write_file_clicked(self):
         """ Write data to *.bdf file. """
-
-        if self.fname is None:
-            return
 
         file = QFileDialog.getSaveFileName(self,
                                            "Save file",
@@ -438,9 +455,6 @@ class DataViewer(QMainWindow):
     def on_y_demean(self):
         """ Set y-scale demean on/off. """
 
-        if self.fname is None:
-            return
-
         self.scale["y_demean"] = not self.scale["y_demean"]
         if self.scale["y_demean"]:
             self.gui.y_demean.setText("Y Demean (off)")
@@ -450,9 +464,6 @@ class DataViewer(QMainWindow):
 
     def on_toggle_cursor_clicked(self):
         """ Toggle cursor on/off. """
-
-        if self.fname is None:
-            return
 
         self.cursor_on = not self.cursor_on
 
@@ -500,9 +511,6 @@ class DataViewer(QMainWindow):
     def on_y_spacing_factor_slider(self):
         """ Set y-scale spacing. """
 
-        if self.fname is None:
-            return
-
         self.scale["yspacing_factor"] = self.gui.y_spacing_factor_slider.value()
         yrange = np.ptp(self.scale["yoffset"])
         self.gui.y_spacing_offset_slider.setMinimum(-yrange/2)
@@ -514,9 +522,6 @@ class DataViewer(QMainWindow):
     def on_y_spacing_offset_slider(self):
         """ Set y-scale offset. """
 
-        if self.fname is None:
-            return
-
         self.scale["yspacing_offset"] = self.gui.y_spacing_offset_slider.value()
         self.gui.y_spacing_offset_slider.setValue(self.scale["yspacing_offset"])
         self.set_plot()
@@ -524,9 +529,6 @@ class DataViewer(QMainWindow):
 
     def on_y_spacing_clicked(self, val):
         """ Set y-scale spacing. """
-
-        if self.fname is None:
-            return
 
         self.scale["yspacing_factor"] += val
         self.gui.y_spacing_factor_slider.blockSignals(True)
@@ -575,13 +577,12 @@ class DataViewer(QMainWindow):
         self.labels_selected = None
         self.events = None
         self.channels = None
+        self.set_menubar(file_loaded=False)
+        self.set_qt_connections(connect=False)
         self.set_plot_blank()
 
     def on_y_scale_type_clicked(self):
         """ Change y-scale type (vertical vs. butterfly). """
-
-        if self.fname is None:
-            return
 
         self.scale["type"].rotate(1)
         self.set_plot()
@@ -589,9 +590,6 @@ class DataViewer(QMainWindow):
 
     def on_y_scale_clicked(self, val):
         """ Change y-scale. """
-
-        if self.fname is None:
-            return
 
         if 0 >= self.scale["ymin"] >= -5000:
             self.scale["ymin"] -= val
@@ -620,9 +618,6 @@ class DataViewer(QMainWindow):
     def on_y_scale_slider(self):
         """ Change y-scale. """
 
-        if self.fname is None:
-            return
-
         self.scale["ymin"] = self.gui.y_scale_slider.value()
         self.scale["ymax"] = -self.gui.y_scale_slider.value()
         self.scale["yrange"] = self.scale["ymax"] - self.scale["ymin"]
@@ -632,9 +627,6 @@ class DataViewer(QMainWindow):
 
     def on_x_scale_clicked(self, val):
         """ Change x-scale. """
-
-        if self.fname is None:
-            return
 
         self.scale["xmax"] += val
         if self.scale["xmax"] <= self.scale["xmin"]:
@@ -648,9 +640,6 @@ class DataViewer(QMainWindow):
     def on_x_scale_slider(self):
         """ Change x-scale. """
 
-        if self.fname is None:
-            return
-
         self.scale["xmax"] = self.scale["xmin"] + self.gui.x_scale_slider.value()
         if self.scale["xmax"] <= self.scale["xmin"]:
             self.scale["xmax"] = self.scale["xmin"] + 10
@@ -662,9 +651,6 @@ class DataViewer(QMainWindow):
     def on_x_scroll_clicked(self):
         """ Toggle on/off x-scale scroll. """
 
-        if self.fname is None:
-            return
-
         self.scale["x_scroll"] = not self.scale["x_scroll"]
         if self.scale["x_scroll"]:
             self.gui.x_scroll.setText("X Scroll Auto (off)")
@@ -675,9 +661,6 @@ class DataViewer(QMainWindow):
 
     def on_x_scroll_pos_slider(self):
         """ Change x-scale position"""
-
-        if self.fname is None:
-            return
 
         self.scale["xmin"] = self.gui.x_scroll_pos_slider.value()
         self.scale["xmax"] = self.gui.x_scroll_pos_slider.value() + self.scale["xrange"]
@@ -691,9 +674,6 @@ class DataViewer(QMainWindow):
     def on_x_scroll_speed_clicked(self, val):
         """ Change x-scalle scroll speed. """
 
-        if self.fname is None:
-            return
-
         self.scale["x_scroll_speed"] += val
         self.gui.x_scroll_speed_slider.blockSignals(True)
         self.gui.x_scroll_speed_slider.setValue(self.scale["xmax"])
@@ -703,9 +683,6 @@ class DataViewer(QMainWindow):
 
     def on_x_scroll_speed_slider(self):
         """ Change x-scalle scroll speed. """
-
-        if self.fname is None:
-            return
 
         self.scale["x_scroll_speed"] = self.gui.x_scroll_speed_slider.value()
         self.update_plot()
@@ -727,9 +704,6 @@ class DataViewer(QMainWindow):
     def on_toggle_events_clicked(self):
         """ Toggle on/off show/hide events in main plot window. """
 
-        if self.fname is None:
-            return
-
         self.plot_events = not self.plot_events
         if self.plot_events:
             self.gui.toggle_events.setText("Hide Events")
@@ -742,17 +716,11 @@ class DataViewer(QMainWindow):
     def on_events_info_clicked(self):
         """ Display summary (value: count) of events in *.bdf file. """
 
-        if self.fname is None:
-            return
-
         events = EventsTable(self.events["count"], parent=self)
         events.show()
 
     def on_x_region_clicked(self):
         """ Toggle on/off x region selection. """
-
-        if self.fname is None:
-            return
 
         self.x_region_on = not self.x_region_on
         if self.x_region_on:
@@ -764,9 +732,6 @@ class DataViewer(QMainWindow):
 
     def on_reset_clicked(self):
         """ Reset plot. """
-
-        if self.fname is None:
-            return
 
         self.scale = self.set_scale()
         self.channel_selection = []
@@ -782,9 +747,6 @@ class DataViewer(QMainWindow):
 
     def on_channel_selection(self):
         """ Select/show specific channels only. """
-
-        if self.fname is None:
-            return
 
         self.channel_selection = []
         for selection in self.gui.channel_selection.selectedItems():
