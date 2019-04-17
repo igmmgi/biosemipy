@@ -14,9 +14,9 @@ class BDF:
         write
         merge
         crop
+        decimate
         delete_channels
         select_channels
-        decimate
         channel_difference
     """
 
@@ -243,27 +243,6 @@ class BDF:
         self.trig["val"] = self.trig["val"][trig_start:trig_end]
         self.trig["count"] = self._trigger_count()
 
-    def delete_channels(self, chans):
-        """
-        Delete specific data channels.
-        :param chans: list
-        """
-
-        chans = self._channel_idx(chans)
-        chans = list(set(range(self.hdr["n_chans"])).difference(chans[:-1]))
-        self.data = self.data[chans[:-1], :]
-        self._update_header(chans)
-
-    def select_channels(self, chans):
-        """
-        Select specific data channels.
-        :param chans: list
-        """
-
-        chans = self._channel_idx(chans)
-        self.data = self.data[chans[:-1], :]
-        self._update_header(chans)
-
     def decimate(self, factor):
         """
         Downsample bdf file by a factor of 2,4, or 8 using
@@ -285,6 +264,27 @@ class BDF:
         self.trig["raw"] = np.zeros(np.shape(self.data)[1])
         self.trig["idx"] = np.divide(self.trig["idx"], factor).astype(int)
         self.trig["raw"][self.trig["idx"]] = self.trig["val"]
+
+    def delete_channels(self, chans):
+        """
+        Delete specific data channels.
+        :param chans: list
+        """
+
+        chans = self._channel_idx(chans)
+        chans = list(set(range(self.hdr["n_chans"])).difference(chans[:-1]))
+        self.data = self.data[chans[:-1], :]
+        self._update_header(chans)
+
+    def select_channels(self, chans):
+        """
+        Select specific data channels.
+        :param chans: list
+        """
+
+        chans = self._channel_idx(chans)
+        self.data = self.data[chans[:-1], :]
+        self._update_header(chans)
 
     def channel_difference(self, chan1, chan2, label):
         """

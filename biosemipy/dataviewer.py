@@ -1,3 +1,6 @@
+"""
+DataViewer: PyQt5-based gui for viewing *.bdf files
+"""
 import os
 import sys
 from collections import deque
@@ -25,6 +28,18 @@ pg.setConfigOptions(background="k", foreground="w", useOpenGL=True)
 
 
 class DataViewer(QMainWindow):
+    """
+    DataViewer: PyQt5-based gui for viewing *.bdf files
+    File options include:
+        read
+        write
+        merge
+        crop
+        decimate
+        delete_channels
+        select_channels
+        channel_difference
+    """
 
     def __init__(self, fname=None, channels=None):
 
@@ -77,7 +92,7 @@ class DataViewer(QMainWindow):
         # main gui
         self.gui = Ui_MainWindow()
         self.gui.setupUi(self)
-        self.gui.plot = pg.PlotWidget(enableMenu=False, autoRange=False)
+        self.gui.plot = pg.PlotWidget(enableMenu=False)
         self.gui.plot.setMouseEnabled(x=False, y=False)
         self.gui.layout.insertWidget(0, self.gui.plot)
         self.scale = self.set_scale()
@@ -345,20 +360,27 @@ class DataViewer(QMainWindow):
         visuals_menu.addAction(line_size_action)
 
     def on_decimate_file_clicked(self):
+        """ Get user selected decimate factor and call bdf.decimate() """
 
         selection = Decimate([2, 4, 8], parent=self)
         selection.show()
         if selection.exec_():
             factor = selection.get_selection()
 
+            self.fname = self.fname[:-4] + "_dec" + ".bdf"
             self.bdf.decimate(factor)
             self.data = self.bdf.data
             self.time = self.bdf.time
+            self.set_qt_connections(connect=False)
+            self.scale["xmax"] = int(self.scale["xmax"] / factor)
+            self.scale["xrange"] = self.scale["xmax"] - self.scale["xmin"]
             self.set_slider_values()
+            self.set_qt_connections(connect=True)
             self.set_plot()
             self.update_plot()
 
     def on_crop_file_clicked(self):
+        """ Get user selected crop settings and call bdf.crop() """
 
         selection = Crop(self.events["count"], self.bdf.hdr["n_recs"],
                          parent=self)
@@ -366,11 +388,13 @@ class DataViewer(QMainWindow):
         if selection.exec_():
             crop_type, val1, val2 = selection.get_selection()
 
-            self.fname = self.fname[:-4] + "_cropped" + ".bdf"
+            self.fname = self.fname[:-4] + "_crop" + ".bdf"
             self.bdf.crop(self.fname, crop_type, [val1, val2])
             self.data = self.bdf.data
             self.time = self.bdf.time
+            self.set_qt_connections(connect=False)
             self.set_slider_values()
+            self.set_qt_connections(connect=True)
             self.set_plot()
             self.update_plot()
 
@@ -598,6 +622,7 @@ class DataViewer(QMainWindow):
         self.events = None
         self.channels = None
         self.set_menubar(file_loaded=False)
+        self.scale = self.set_scale()
         self.set_qt_connections(connect=False)
         self.set_plot_blank()
 
@@ -842,9 +867,6 @@ class DataViewer(QMainWindow):
 
         self.set_axes(self.scale["type"])
 
-        if self.scale["x_scroll"]:
-            self.inc_x_scale()
-
         # channel data
         if self.scale["type"][0] == "vertical":
             for idx, channel in enumerate(self.channel_items):
@@ -859,7 +881,9 @@ class DataViewer(QMainWindow):
         for idx, label in enumerate(self.label_items):
             label.setPos(label_pos_y, self.scale["yoffset"][idx])
 
-        # events
+        if self.scale["x_scroll"]:
+            self.inc_x_scale()
+
         if self.plot_events:
             self._plot_events()
 
