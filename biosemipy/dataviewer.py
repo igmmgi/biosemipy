@@ -100,7 +100,6 @@ class DataViewer(QMainWindow):
         if self.fname:
             self.read_bdf_file()
             self.set_menubar(file_loaded=True)
-            self.set_qt_connections(connect=True)
             self.set_plot()
             self.update_plot()
         else:
@@ -1039,6 +1038,10 @@ class DataViewer(QMainWindow):
 
 
 def run(fname=None):
+
+    # check if file name entered as command line argument
+    if fname is None and len(sys.argv) > 1:
+        fname = sys.argv[1]
 
     app = QtGui.QApplication(sys.argv)
     if fname is not None:
