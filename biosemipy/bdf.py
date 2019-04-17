@@ -3,6 +3,7 @@ Python module to read BioSemi EEG data files.
 """
 import numpy as np
 from numba import jit
+from scipy.signal import decimate
 
 
 class BDF:
@@ -15,6 +16,7 @@ class BDF:
         crop
         delete_channels
         select_channels
+        decimate
         channel_difference
     """
 
@@ -261,6 +263,28 @@ class BDF:
         chans = self._channel_idx(chans)
         self.data = self.data[chans[:-1], :]
         self._update_header(chans)
+
+    def decimate(self, factor):
+        """
+        Downsample bdf file by a factor of 2,4, or 8 using
+        scipy.signal.decimate.
+        """
+
+        assert factor in [1, 2, 4, 8]
+        self.data = decimate(self.data, factor)
+
+        # adjust header
+        self.hdr["freq"] = [int(x / factor) for x in self.hdr["freq"]]
+        self.hdr["n_samps"] = [int(x / factor) for x in self.hdr["n_samps"]]
+
+        # adjusut time vector
+        self.freq = int(self.freq / factor)
+        self.time = np.arange(0, np.shape(self.data)[1] - 1) / self.freq
+
+        # adjust trigger index
+        self.trig["raw"] = np.zeros(np.shape(self.data)[1])
+        self.trig["idx"] = np.divide(self.trig["idx"], factor).astype(int)
+        self.trig["raw"][self.trig["idx"]] = self.trig["val"]
 
     def channel_difference(self, chan1, chan2, label):
         """

@@ -18,6 +18,7 @@ from biosemipy.gui.plot import Ui_MainWindow
 from biosemipy.gui.display_text import DisplayText
 from biosemipy.gui.events_table import EventsTable
 from biosemipy.gui.crop import Crop
+from biosemipy.gui.decimate import Decimate
 
 
 pg.setConfigOptions(background="k", foreground="w", useOpenGL=True)
@@ -286,6 +287,9 @@ class DataViewer(QMainWindow):
         crop_file_action = QAction('&Crop BDF File', self)
         crop_file_action.triggered.connect(self.on_crop_file_clicked)
 
+        decimate_file_action = QAction('&Decimate BDF File', self)
+        decimate_file_action.triggered.connect(self.on_decimate_file_clicked)
+
         file_info_action = QAction('&File Information', self)
         file_info_action.triggered.connect(self.on_file_info_clicked)
 
@@ -321,6 +325,7 @@ class DataViewer(QMainWindow):
         file_menu.addAction(merge_file_action)
         file_menu.addAction(write_file_action)
         file_menu.addAction(crop_file_action)
+        file_menu.addAction(decimate_file_action)
         file_menu.addAction(file_info_action)
         file_menu.addAction(clear_file_action)
 
@@ -339,6 +344,20 @@ class DataViewer(QMainWindow):
         visuals_menu.addAction(font_size_action)
         visuals_menu.addAction(line_size_action)
 
+    def on_decimate_file_clicked(self):
+
+        selection = Decimate([2, 4, 8], parent=self)
+        selection.show()
+        if selection.exec_():
+            factor = selection.get_selection()
+
+            self.bdf.decimate(factor)
+            self.data = self.bdf.data
+            self.time = self.bdf.time
+            self.set_slider_values()
+            self.set_plot()
+            self.update_plot()
+
     def on_crop_file_clicked(self):
 
         selection = Crop(self.events["count"], self.bdf.hdr["n_recs"],
@@ -350,7 +369,8 @@ class DataViewer(QMainWindow):
             self.fname = self.fname[:-4] + "_cropped" + ".bdf"
             self.bdf.crop(self.fname, crop_type, [val1, val2])
             self.data = self.bdf.data
-            self.set_sliders()
+            self.time = self.bdf.time
+            self.set_slider_values()
             self.set_plot()
             self.update_plot()
 

@@ -6,6 +6,7 @@ setup(name='biosemipy',
       author='IGM',
       packages=['biosemipy'],
       license='MIT',
-      install_requires=['numba', 'numpy', 'pyqtgraph', 'PyQt5', 'matplotlib'],
+      install_requires=['numba', 'numpy', 'pyqtgraph', 'PyQt5', 'matplotlib',
+                        'scipy'],
       zip_safe=False
       )

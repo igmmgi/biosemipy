@@ -3,3 +3,4 @@ matplotlib
 numba
 numpy
 pyqtgraph
+scipy
