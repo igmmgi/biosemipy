@@ -14,6 +14,7 @@ read \
 write \
 merge \
 crop \
+decimate \
 delete_channels \
 select_channels \
 channel_difference 
