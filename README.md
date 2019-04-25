@@ -42,7 +42,7 @@ dataviewer.run("filename.bdf")
 ```
 
 #### Basic Examples dataviewer from command line
-python -m biosemipy.dataviewer
+python -m biosemipy.dataviewer \
 python -m biosemipy.dataviewer filename1.bdf
 
 ### Data Viewer GUI
