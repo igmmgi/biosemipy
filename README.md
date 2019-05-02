@@ -5,8 +5,6 @@ allows visualisation of the *.bdf files.
 ## Installation
 git clone https://github.com/igmmgi/biosemipy.git 
 
-cd biosemipy
-
 pip install -e biosemipy
 
 ## Methods
