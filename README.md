@@ -3,7 +3,7 @@ Python code for BioSemi 24 bit EEG files. A dataviewer written using PyQt5/pyqtg
 allows visualisation of the *.bdf files. 
 
 ## Installation
-git clone https://github.com/igmmgi/DMCpython.git 
+git clone https://github.com/igmmgi/biosemipy.git 
 
 cd biosemipy
 
