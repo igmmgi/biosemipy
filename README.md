@@ -7,7 +7,7 @@ git clone https://github.com/igmmgi/biosemipy.git
 
 pip install -e biosemipy
 
-## Methods
+# biosemipy.bdf 
 read \
 write \
 merge \
@@ -19,7 +19,7 @@ channel_difference
 
 dataviewer gui
 
-#### Basic Example bdf
+#### Basic Example biosemipy.bdf
 ```python
 # bdf file class
 from biosemipy import bdf
@@ -45,3 +45,26 @@ python -m biosemipy.dataviewer filename1.bdf
 
 ### Data Viewer GUI
 ![alt text](/screenshots/dataviewer.png)  
+
+# biosemi.topo
+generate_outline \
+read_layout \
+interp_data \
+roi_outline \
+plot_markers \
+plot_labels \
+plot_colorbar \
+plot_contour_lines \
+plot_title \
+plot \
+show
+
+#### Basic Example biosemipy.topo
+from biosemipy import topo
+
+topo_plt = topo.Topo() \
+topo_plt.plot() \
+topo_plt.show()
+
+![alt text](/screenshots/topo.png)  
+
