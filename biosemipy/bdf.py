@@ -50,12 +50,9 @@ class BDF:
         n_recs = "Number Records: " + str(self.hdr["n_recs"])
         n_samps = "Number Samples: " + str((self.freq * self.hdr["n_recs"]))
 
-        return "{}\n{}\n{}\n{}\n{}\n{}".format(name,
-                                               n_chans,
-                                               labels,
-                                               freq,
-                                               n_recs,
-                                               n_samps)
+        return "{}\n{}\n{}\n{}\n{}\n{}".format(
+            name, n_chans, labels, freq, n_recs, n_samps
+        )
 
     def __repr__(self):
         return self.__str__()
@@ -93,10 +90,12 @@ class BDF:
             self.hdr["n_samps"] = [np.int(f.read(8)) for _ in ch]
             self.hdr["reserved"] = [f.read(32).decode().strip() for _ in ch]
             self.hdr["scale"] = np.array(
-                (self.hdr["pmax"] - self.hdr["pmin"]) /
-                (self.hdr["dmax"] - self.hdr["dmin"]))
-            self.hdr["freq"] = [int(self.hdr["n_samps"][i] /
-                                    self.hdr["dur_recs"]) for i in ch]
+                (self.hdr["pmax"] - self.hdr["pmin"])
+                / (self.hdr["dmax"] - self.hdr["dmin"])
+            )
+            self.hdr["freq"] = [
+                int(self.hdr["n_samps"][i] / self.hdr["dur_recs"]) for i in ch
+            ]
 
             if hdr_only:
                 return
@@ -148,12 +147,14 @@ class BDF:
 
         sf = np.array(self.hdr["scale"][:-1])
         data = np.int32(np.round(self.data / sf[:, None]))
-        bdf = _matrix2bdf(data,
-                          self.trig["raw"],
-                          self.status,
-                          self.hdr["n_recs"],
-                          self.hdr["n_samps"][0],
-                          self.hdr["n_chans"])
+        bdf = _matrix2bdf(
+            data,
+            self.trig["raw"],
+            self.status,
+            self.hdr["n_recs"],
+            self.hdr["n_samps"][0],
+            self.hdr["n_chans"],
+        )
 
         dat = np.concatenate([hdr, bdf])
         dat.astype("uint8").tofile(fname)
@@ -169,9 +170,9 @@ class BDF:
 
         # check datafiles can be merged appropriately
         for x in data_to_merge:
-            assert self.hdr["n_chans"] == x.hdr["n_chans"], "Different number of channels!"
-            assert self.hdr["labels"] == x.hdr["labels"], "Different channel labels!"
-            assert self.hdr["freq"][0] == x.hdr["freq"][0], "Different sample rate!"
+            assert self.hdr["n_chans"] == x.hdr["n_chans"], "Diff number of channels!"
+            assert self.hdr["labels"] == x.hdr["labels"], "Diff channel labels!"
+            assert self.hdr["freq"][0] == x.hdr["freq"][0], "Diff sample rate!"
 
         self.fname = fname
         for x in data_to_merge:
@@ -217,9 +218,7 @@ class BDF:
                 idx_end = self.trig["idx"][trig_end]
 
             # need to find boundary equal to record breaks
-            borders = np.arange(0,
-                                np.shape(self.data)[1] + self.freq,
-                                self.freq)
+            borders = np.arange(0, np.shape(self.data)[1] + self.freq, self.freq)
             idx_start = np.where(borders >= idx_start)[0][0] * self.freq
             idx_end = np.where(borders <= idx_end)[0][-1] * self.freq
 
@@ -227,7 +226,7 @@ class BDF:
 
             # find trigger value index
             idx_start = ((val[0] - 1) * self.freq) + 1
-            idx_end = (val[1] * self.freq)
+            idx_end = val[1] * self.freq
             trig_start = np.where(self.trig["idx"] >= idx_start)[0][0]
             trig_end = np.where(self.trig["idx"] <= idx_end)[0][-1]
 
@@ -300,8 +299,7 @@ class BDF:
         chans = self._channel_idx(self.hdr["labels"][:-1])
 
         self.hdr["labels"].insert(-1, label)
-        self.data = np.vstack([self.data,
-                               self.data[chan1, :] - self.data[chan2, :]])
+        self.data = np.vstack([self.data, self.data[chan1, :] - self.data[chan2, :]])
 
         chans.append(chan1)
         self._update_header(chans, update_labels=False)
@@ -339,12 +337,14 @@ class BDF:
         :param chans: list of channels
         """
 
-        data, trig, status = _bdf2matrix(bdf_dat,
-                                         chans,
-                                         self.hdr["scale"],
-                                         self.hdr["n_chans"],
-                                         self.hdr["n_recs"],
-                                         self.hdr["n_samps"][0])
+        data, trig, status = _bdf2matrix(
+            bdf_dat,
+            chans,
+            self.hdr["scale"],
+            self.hdr["n_chans"],
+            self.hdr["n_recs"],
+            self.hdr["n_samps"][0],
+        )
 
         self.data = data
         self.trig = {"raw": trig}
@@ -358,8 +358,20 @@ class BDF:
         """
 
         self.hdr["n_chans"] = len(chans)
-        fields = ["labels", "type", "unit", "pmin", "pmax", "dmin", "dmax",
-                  "filter", "n_samps", "reserved", "scale", "freq"]
+        fields = [
+            "labels",
+            "type",
+            "unit",
+            "pmin",
+            "pmax",
+            "dmin",
+            "dmax",
+            "filter",
+            "n_samps",
+            "reserved",
+            "scale",
+            "freq",
+        ]
         for field in fields:
             # required with channel difference as new label manually inserted
             if field == "labels" and not update_labels:
@@ -418,22 +430,22 @@ def _bdf2matrix(bdf_dat, chans, scale, n_chans, n_recs, n_samps):
                 if chan < (n_chans - 1):
                     for samp in range(n_samps):
                         val1 = np.int32(bdf_dat[pos]) << 8
-                        val2 = np.int32(bdf_dat[pos+1]) << 16
-                        val3 = -(np.int32(-bdf_dat[pos+2])) << 24
+                        val2 = np.int32(bdf_dat[pos + 1]) << 16
+                        val3 = -(np.int32(-bdf_dat[pos + 2])) << 24
                         val = ((val1 | val2 | val3) >> 8) * scale[chan]
-                        data[idx, rec*n_samps+samp] = np.float32(val)
+                        data[idx, rec * n_samps + samp] = np.float32(val)
                         pos += 3
                 else:  # last channel is always Status channel
                     for samp in range(n_samps):
                         val1 = np.int16(bdf_dat[pos])
-                        val2 = np.int16(bdf_dat[pos+1])
+                        val2 = np.int16(bdf_dat[pos + 1])
                         val = val1 | (val2 << 8)
-                        trig[rec*n_samps+samp] = val
-                        status[rec*n_samps+samp] = np.int16(bdf_dat[pos+2])
+                        trig[rec * n_samps + samp] = val
+                        status[rec * n_samps + samp] = np.int16(bdf_dat[pos + 2])
                         pos += 3
                 idx += 1
             else:
-                pos += n_samps*3
+                pos += n_samps * 3
 
     return data, trig, status
 
@@ -453,25 +465,25 @@ def _matrix2bdf(data, trig, status, n_recs, n_samps, n_chans):
     :return: numpy vector
     """
 
-    bdf = np.zeros(3*(n_recs*n_chans*n_samps), dtype=np.uint8)
+    bdf = np.zeros(3 * (n_recs * n_chans * n_samps), dtype=np.uint8)
 
     pos = 0
     for rec in range(n_recs):
         for chan in range(n_chans):
             if chan < (n_chans - 1):
                 for samp in range(n_samps):
-                    val = data[chan, rec*n_samps + samp]
+                    val = data[chan, rec * n_samps + samp]
                     bdf[pos] = np.uint8(val)
                     bdf[pos + 1] = np.uint8(val >> 8)
                     bdf[pos + 2] = np.uint8(val >> 16)
                     pos += 3
             else:
                 for samp in range(n_samps):
-                    trig_val = trig[rec*n_samps+samp]
-                    status_val = status[rec*n_samps+samp]
+                    trig_val = trig[rec * n_samps + samp]
+                    status_val = status[rec * n_samps + samp]
                     bdf[pos] = np.uint8(trig_val)
-                    bdf[pos+1] = np.uint8(status_val) >> 8
-                    bdf[pos+2] = np.uint8(status_val)
+                    bdf[pos + 1] = np.uint8(status_val) >> 8
+                    bdf[pos + 2] = np.uint8(status_val)
                     pos += 3
 
     return bdf
