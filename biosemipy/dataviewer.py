@@ -45,6 +45,7 @@ class DataViewer(QMainWindow):
         delete_channels
         select_channels
         channel_difference
+        rereference
     """
 
     def __init__(self, fname=None, channels=None):
@@ -363,6 +364,9 @@ class DataViewer(QMainWindow):
         channel_delete_action = QAction("&Channel Deletion", self)
         channel_delete_action.triggered.connect(self.on_channel_delete_action)
 
+        channel_rereference_action = QAction("&Re-reference", self)
+        channel_rereference_action.triggered.connect(self.on_channel_rereference_action)
+
         theme_action = QAction("&Invert Theme", self)
         theme_action.triggered.connect(self.invert_theme)
 
@@ -390,6 +394,7 @@ class DataViewer(QMainWindow):
         channel_menu.addAction(channel_difference_action)
         channel_menu.addAction(channel_select_action)
         channel_menu.addAction(channel_delete_action)
+        channel_menu.addAction(channel_rereference_action)
 
         visuals_menu = menu_bar.addMenu("&Visuals")
         visuals_menu.addAction(theme_action)
@@ -475,6 +480,17 @@ class DataViewer(QMainWindow):
             self.labels_selected = self.bdf.hdr["labels"][:-1]
             self.set_selection_labels()
             self.set_plot()
+            self.update_plot()
+
+    def on_channel_rereference_action(self):
+        """ Re-reference channels. """
+        
+        selection = ChannelSelection(self.labels_selected, parent=self)
+        selection.show()
+        if selection.exec_():
+            chans = selection.get_selection()
+
+            self.bdf.rereference(chans)
             self.update_plot()
 
     def on_file_info_clicked(self):

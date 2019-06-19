@@ -1,10 +1,15 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QDialog, QDialogButtonBox, \
-    QVBoxLayout, QListWidget, QAbstractItemView
+from PyQt5.QtWidgets import (
+    QApplication,
+    QDialog,
+    QDialogButtonBox,
+    QVBoxLayout,
+    QListWidget,
+    QAbstractItemView,
+)
 
 
 class ChannelSelection(QDialog):
-
     def __init__(self, labels, parent=None):
 
         QDialog.__init__(self, parent)
@@ -28,23 +33,25 @@ class ChannelSelection(QDialog):
     def get_selection(self):
 
         selection = []
+        print("Selecting Channel:")
         for select in self.selection_box.selectedItems():
             label = select.text()
-            print("Selecting Channel: {}".format(label))
+            # print("Selecting Channel: {}".format(label))
+            print("{}".format(label), sep=", ")
             selection.append(select.text())
-
+        print("", end="\n")
         return selection
 
 
 def main():
 
     app = QApplication(sys.argv)
-    channel_selection = ChannelSelection(["a1", "b1",  "a2", "b2"])
+    channel_selection = ChannelSelection(["a1", "b1", "a2", "b2"])
     channel_selection.show()
     if channel_selection.exec_():
         channel_selection.get_selection()
     sys.exit(app.quit())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

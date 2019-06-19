@@ -18,6 +18,7 @@ class BDF:
         delete_channels
         select_channels
         channel_difference
+        rereference
     """
 
     def __init__(self, fname=None, hdr_only=False, chans=None):
@@ -303,6 +304,13 @@ class BDF:
 
         chans.append(chan1)
         self._update_header(chans, update_labels=False)
+
+    def rereference(self, chan):
+        """ Re-reference """
+
+        chan_nums = self._channel_idx(chan)[:-1]
+        ref = self.data[chan_nums, :]
+        self.data -= ref.mean(0)
 
     def _channel_idx(self, chans):
         """
