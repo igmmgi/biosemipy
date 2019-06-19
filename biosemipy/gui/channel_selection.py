@@ -36,10 +36,9 @@ class ChannelSelection(QDialog):
         print("Selecting Channel:")
         for select in self.selection_box.selectedItems():
             label = select.text()
-            # print("Selecting Channel: {}".format(label))
-            print("{}".format(label), sep=", ")
+            print("{}".format(label), end=" ")
             selection.append(select.text())
-        print("", end="\n")
+        print("")
         return selection
 
 

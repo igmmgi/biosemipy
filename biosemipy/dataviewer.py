@@ -370,13 +370,13 @@ class DataViewer(QMainWindow):
         theme_action = QAction("&Invert Theme", self)
         theme_action.triggered.connect(self.invert_theme)
 
-        colourmap_select_action = QAction("&Colourmap (select)", self)
+        colourmap_select_action = QAction("&Colourmap", self)
         colourmap_select_action.triggered.connect(self.select_colourmap)
 
-        font_size_action = QAction("&Font Size (select)", self)
+        font_size_action = QAction("&Font Size", self)
         font_size_action.triggered.connect(self.select_font_size)
 
-        line_size_action = QAction("&Line Width (select)", self)
+        line_size_action = QAction("&Line Width", self)
         line_size_action.triggered.connect(self.select_line_width)
 
         file_menu.addAction(merge_file_action)
@@ -484,7 +484,7 @@ class DataViewer(QMainWindow):
 
     def on_channel_rereference_action(self):
         """ Re-reference channels. """
-        
+
         selection = ChannelSelection(self.labels_selected, parent=self)
         selection.show()
         if selection.exec_():
