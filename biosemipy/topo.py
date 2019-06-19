@@ -14,7 +14,7 @@ from scipy.interpolate import Rbf
 class Topo:
     """ EEG Topographic Plots """
 
-    def __init__(self, data=np.random.rand(64), layout_file="biosemi64.csv"):
+    def __init__(self, data=None, layout_file="biosemi64.csv"):
 
         self.data = data
         self.data_interp = None
@@ -307,6 +307,7 @@ class Topo:
     def show(self):
         plt.show()
 
+
 def run_examples():
 
     # Example 1
@@ -315,16 +316,21 @@ def run_examples():
     topo.show()
 
     # Example 2
-    topo = Topo()
-    topo.plot(contour_lines=False)
-    topo.show()
-
-    # Example 3
-    topo = Topo(data=None)
+    topo = Topo(data=np.random.rand(64))
     topo.plot()
     topo.show()
 
+    # Example 3
+    topo = Topo(data=np.random.rand(64))
+    topo.plot(contour_lines=False)
+    topo.show()
+
     # Example 4
+    topo = Topo(data=None, layout_file="biosemi256.csv")
+    topo.plot()
+    topo.show()
+
+    # Example 5
     topo = Topo(data=None)
     topo.plot(
         roi_outline=True,
