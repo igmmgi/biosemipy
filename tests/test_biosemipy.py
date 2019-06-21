@@ -14,7 +14,7 @@ class BDFTestCase(unittest.TestCase):
 
         dat = BDF("Newtest17-256.bdf")
 
-        self.assertEqual(dat.hdr["n_bytes_hdr"], 18*256)
+        self.assertEqual(dat.hdr["n_bytes_hdr"], 18 * 256)
         self.assertEqual(dat.hdr["n_chans"], 17)
         self.assertEqual(dat.hdr["n_recs"], 60)
         self.assertEqual(dat.hdr["freq"][0], 256)
@@ -28,7 +28,7 @@ class BDFTestCase(unittest.TestCase):
 
         dat = BDF("Newtest17-256.bdf", hdr_only=True)
 
-        self.assertEqual(dat.hdr["n_bytes_hdr"], 18*256)
+        self.assertEqual(dat.hdr["n_bytes_hdr"], 18 * 256)
         self.assertEqual(dat.hdr["n_chans"], 17)
         self.assertEqual(dat.hdr["n_recs"], 60)
         self.assertEqual(dat.hdr["freq"][0], 256)
@@ -46,17 +46,13 @@ class BDFTestCase(unittest.TestCase):
         self.assertEqual(np.shape(dat2.data), (3, 15360))
         self.assertEqual(np.shape(dat3.data), (1, 15360))
 
-        self.assertTrue(np.array_equal(dat1.data[0, :],
-                                       dat2.data[0, :]))
+        self.assertTrue(np.array_equal(dat1.data[0, :], dat2.data[0, :]))
 
-        self.assertTrue(np.array_equal(dat1.data[2, :],
-                                       dat3.data[0, :]))
+        self.assertTrue(np.array_equal(dat1.data[2, :], dat3.data[0, :]))
 
-        self.assertTrue(np.array_equal(dat1.data[2, :],
-                                       dat2.data[1, :]))
+        self.assertTrue(np.array_equal(dat1.data[2, :], dat2.data[1, :]))
 
-        self.assertTrue(np.array_equal(dat1.data[2, :],
-                                       dat3.data[0, :]))
+        self.assertTrue(np.array_equal(dat1.data[2, :], dat3.data[0, :]))
 
         self.assertEqual(dat2.hdr["n_chans"], 4)
         self.assertEqual(dat3.hdr["n_chans"], 2)
@@ -76,7 +72,7 @@ class BDFTestCase(unittest.TestCase):
 
         dat = BDF("Newtest17-2048.bdf")
 
-        self.assertEqual(dat.hdr["n_bytes_hdr"], 18*256)
+        self.assertEqual(dat.hdr["n_bytes_hdr"], 18 * 256)
         self.assertEqual(dat.hdr["n_chans"], 17)
         self.assertEqual(dat.hdr["n_recs"], 60)
         self.assertEqual(dat.hdr["freq"][0], 2048)
@@ -90,7 +86,7 @@ class BDFTestCase(unittest.TestCase):
 
         dat = BDF("Newtest17-2048.bdf", hdr_only=True)
 
-        self.assertEqual(dat.hdr["n_bytes_hdr"], 18*256)
+        self.assertEqual(dat.hdr["n_bytes_hdr"], 18 * 256)
         self.assertEqual(dat.hdr["n_chans"], 17)
         self.assertEqual(dat.hdr["n_recs"], 60)
         self.assertEqual(dat.hdr["freq"][0], 2048)
@@ -108,17 +104,13 @@ class BDFTestCase(unittest.TestCase):
         self.assertEqual(np.shape(dat2.data), (3, 122880))
         self.assertEqual(np.shape(dat3.data), (1, 122880))
 
-        self.assertTrue(np.array_equal(dat1.data[0, :],
-                                       dat2.data[0, :]))
+        self.assertTrue(np.array_equal(dat1.data[0, :], dat2.data[0, :]))
 
-        self.assertTrue(np.array_equal(dat1.data[2, :],
-                                       dat3.data[0, :]))
+        self.assertTrue(np.array_equal(dat1.data[2, :], dat3.data[0, :]))
 
-        self.assertTrue(np.array_equal(dat1.data[2, :],
-                                       dat2.data[1, :]))
+        self.assertTrue(np.array_equal(dat1.data[2, :], dat2.data[1, :]))
 
-        self.assertTrue(np.array_equal(dat1.data[2, :],
-                                       dat3.data[0, :]))
+        self.assertTrue(np.array_equal(dat1.data[2, :], dat3.data[0, :]))
 
         self.assertEqual(dat2.hdr["n_chans"], 4)
         self.assertEqual(dat3.hdr["n_chans"], 2)
@@ -149,3 +141,6 @@ class BDFTestCase(unittest.TestCase):
 
         self.assertTrue(np.all(dat1.data == dat2.data))
 
+
+if __name__ == "__main__":
+    unittest.main()

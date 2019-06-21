@@ -305,12 +305,11 @@ class BDF:
         chans.append(chan1)
         self._update_header(chans, update_labels=False)
 
-    def rereference(self, chan):
+    def rereference(self, chans):
         """ Re-reference """
 
-        chan_nums = self._channel_idx(chan)[:-1]
-        ref = self.data[chan_nums, :]
-        self.data -= ref.mean(0)
+        chans = self._channel_idx(chans)[:-1]
+        self.data -= self.data[chans, :].mean(0)
 
     def _channel_idx(self, chans):
         """
