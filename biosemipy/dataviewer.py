@@ -485,10 +485,14 @@ class DataViewer(QMainWindow):
     def on_channel_rereference_action(self):
         """ Re-reference channels. """
 
-        selection = ChannelSelection(self.labels_selected, parent=self)
+        labels = ["Avg"] + self.labels_selected
+        selection = ChannelSelection(labels, parent=self)
         selection.show()
         if selection.exec_():
             chans = selection.get_selection()
+            
+            if "Avg" in chans:
+                chans = self.labels_selected
 
             self.bdf.rereference(chans)
             self.update_plot()

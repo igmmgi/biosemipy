@@ -1,5 +1,4 @@
-"""unittests for biosemipy"""
-
+""" unittests for biosemipy """
 import os
 import unittest
 import numpy as np
@@ -7,7 +6,7 @@ from biosemipy.bdf import BDF
 
 
 class BDFTestCase(unittest.TestCase):
-    """Tests for BDF"""
+    """ Tests for BDF """
 
     def test_read256(self):
         """Newtest17-256: read"""
