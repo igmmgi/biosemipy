@@ -1,10 +1,18 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QDialog, QGroupBox, QComboBox, \
-    QLineEdit, QFormLayout, QLabel, QDialogButtonBox, QVBoxLayout
+from PyQt5.QtWidgets import (
+    QApplication,
+    QDialog,
+    QGroupBox,
+    QComboBox,
+    QLineEdit,
+    QFormLayout,
+    QLabel,
+    QDialogButtonBox,
+    QVBoxLayout,
+)
 
 
 class ChannelDifference(QDialog):
-
     def __init__(self, labels, parent=None):
 
         QDialog.__init__(self, parent)
@@ -49,12 +57,12 @@ class ChannelDifference(QDialog):
 def main():
 
     app = QApplication(sys.argv)
-    channel_difference = ChannelDifference(["a1", "b1",  "a2", "b2"])
+    channel_difference = ChannelDifference(["a1", "b1", "a2", "b2"])
     channel_difference.show()
     if channel_difference.exec_():
         channel_difference.get_selection()
     sys.exit(app.quit())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,10 +1,15 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QDialog, QDialogButtonBox, \
-    QVBoxLayout, QTableWidget, QTableWidgetItem
+from PyQt5.QtWidgets import (
+    QApplication,
+    QDialog,
+    QDialogButtonBox,
+    QVBoxLayout,
+    QTableWidget,
+    QTableWidgetItem,
+)
 
 
 class EventsTable(QDialog):
-
     def __init__(self, event_dict, parent=None):
 
         QDialog.__init__(self, parent)
@@ -39,5 +44,5 @@ def main():
     sys.exit(app.quit())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

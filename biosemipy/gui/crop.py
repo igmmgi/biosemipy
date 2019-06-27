@@ -1,10 +1,16 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QDialog, QDialogButtonBox, \
-    QVBoxLayout, QComboBox, QLabel, QHBoxLayout
+from PyQt5.QtWidgets import (
+    QApplication,
+    QDialog,
+    QDialogButtonBox,
+    QVBoxLayout,
+    QComboBox,
+    QLabel,
+    QHBoxLayout,
+)
 
 
 class Crop(QDialog):
-
     def __init__(self, triggers, n_records, parent=None):
 
         QDialog.__init__(self, parent)
@@ -63,9 +69,11 @@ class Crop(QDialog):
         crop_selection_type = self.selection_box.currentText().lower()
         crop_start_value = int(self.crop_start.currentText())
         crop_end_value = int(self.crop_end.currentText())
-        print("Crop Type: {}\t Range: {}-{}".format(crop_selection_type,
-                                                    crop_start_value,
-                                                    crop_end_value))
+        print(
+            "Crop Type: {}\t Range: {}-{}".format(
+                crop_selection_type, crop_start_value, crop_end_value
+            )
+        )
 
         return crop_selection_type, crop_start_value, crop_end_value
 
@@ -73,7 +81,7 @@ class Crop(QDialog):
 def main():
 
     app = QApplication(sys.argv)
-    app.setApplicationName('Channel Selection')
+    app.setApplicationName("Channel Selection")
     crop_selection = Crop([1, 2, 3, 4], 100)
     crop_selection.show()
     if crop_selection.exec_():
@@ -81,5 +89,5 @@ def main():
     sys.exit(app.quit())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

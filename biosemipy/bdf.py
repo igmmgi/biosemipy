@@ -425,7 +425,7 @@ def _bdf2matrix(bdf_dat, chans, scale, n_chans, n_recs, n_samps):
     :return: numpy matrix (channels by timepoints)
     """
 
-    data = np.zeros((len(chans) - 1, n_recs * n_samps), dtype=np.float32)
+    data = np.zeros((len(chans) - 1, n_recs * n_samps), dtype=np.float64)
     trig = np.zeros(n_recs * n_samps, dtype=np.int16)
     status = np.zeros(n_recs * n_samps, dtype=np.int16)
 
@@ -440,7 +440,7 @@ def _bdf2matrix(bdf_dat, chans, scale, n_chans, n_recs, n_samps):
                         val2 = np.int32(bdf_dat[pos + 1]) << 16
                         val3 = -(np.int32(-bdf_dat[pos + 2])) << 24
                         val = ((val1 | val2 | val3) >> 8) * scale[chan]
-                        data[idx, rec * n_samps + samp] = np.float32(val)
+                        data[idx, rec * n_samps + samp] = np.float64(val)
                         pos += 3
                 else:  # last channel is always Status channel
                     for samp in range(n_samps):

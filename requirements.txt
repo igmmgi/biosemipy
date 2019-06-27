@@ -4,3 +4,4 @@ numba
 numpy
 pyqtgraph
 scipy
+mne

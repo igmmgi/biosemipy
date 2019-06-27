@@ -19,6 +19,7 @@ from PyQt5.QtWidgets import (
     QMessageBox,
 )
 from matplotlib import cm
+from mne.filter import filter_data
 
 from biosemipy.bdf import BDF
 from biosemipy.gui.channel_difference import ChannelDifference
@@ -28,6 +29,7 @@ from biosemipy.gui.display_text import DisplayText
 from biosemipy.gui.events_table import EventsTable
 from biosemipy.gui.crop import Crop
 from biosemipy.gui.decimate import Decimate
+from biosemipy.gui.user_input import UserInput
 
 
 pg.setConfigOptions(background="k", foreground="w", useOpenGL=True)
@@ -48,7 +50,7 @@ class DataViewer(QMainWindow):
         rereference
     """
 
-    def __init__(self, fname=None, channels=None):
+    def __init__(self, fname=None, channels=None, layout_file=None):
 
         super(DataViewer, self).__init__()
 
@@ -85,6 +87,7 @@ class DataViewer(QMainWindow):
         self.bdf = None
         self.data = None
         self.time = None
+        self.layout_file = layout_file
         self.n_channels = None
         self.labels_org = None
         self.labels_selected = None
@@ -386,6 +389,16 @@ class DataViewer(QMainWindow):
         file_menu.addAction(file_info_action)
         file_menu.addAction(clear_file_action)
 
+        data_menu = menu_bar.addMenu("&Filter")
+
+        low_pass_filter_action = QAction("&Low-Pass Filter", self)
+        high_pass_filter_action = QAction("&High-Pass Filter", self)
+        low_pass_filter_action.triggered.connect(self.on_low_pass_filter_action)
+        high_pass_filter_action.triggered.connect(self.on_high_pass_filter_action)
+
+        data_menu.addAction(low_pass_filter_action)
+        data_menu.addAction(high_pass_filter_action)
+
         events_menu = menu_bar.addMenu("&Events")
         events_menu.addAction(events_toggle_action)
         events_menu.addAction(events_info_action)
@@ -401,6 +414,26 @@ class DataViewer(QMainWindow):
         visuals_menu.addAction(colourmap_select_action)
         visuals_menu.addAction(font_size_action)
         visuals_menu.addAction(line_size_action)
+
+    def on_high_pass_filter_action(self):
+        """ Apply high-pass fir filter using MNE defaults """
+
+        selection = UserInput("High-pass filter frequency?", parent=self)
+        selection.show()
+        if selection.exec_():
+            freq = selection.get_selection()
+            self.data = filter_data(self.data, self.bdf.freq, l_freq=freq, h_freq=None)
+            self.update_plot()
+
+    def on_low_pass_filter_action(self):
+        """ Apply low-pass fir filter using MNE defaults """
+
+        selection = UserInput("Low-pass filter frequency?", parent=self)
+        selection.show()
+        if selection.exec_():
+            freq = selection.get_selection()
+            self.data = filter_data(self.data, self.bdf.freq, l_freq=None, h_freq=freq)
+            self.update_plot()
 
     def on_decimate_file_clicked(self):
         """ Get user selected decimate factor and call bdf.decimate() """
@@ -490,7 +523,7 @@ class DataViewer(QMainWindow):
         selection.show()
         if selection.exec_():
             chans = selection.get_selection()
-            
+
             if "Avg" in chans:
                 chans = self.labels_selected
 

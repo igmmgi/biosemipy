@@ -1,10 +1,14 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QDialog, QPlainTextEdit, \
-    QDialogButtonBox, QVBoxLayout
+from PyQt5.QtWidgets import (
+    QApplication,
+    QDialog,
+    QPlainTextEdit,
+    QDialogButtonBox,
+    QVBoxLayout,
+)
 
 
 class DisplayText(QDialog):
-
     def __init__(self, title, txt, parent=None):
 
         QDialog.__init__(self, parent)
@@ -33,5 +37,5 @@ def main():
     sys.exit(app.quit())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

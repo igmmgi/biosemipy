@@ -1,10 +1,15 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QDialog, QDialogButtonBox, \
-    QVBoxLayout, QComboBox, QLabel
+from PyQt5.QtWidgets import (
+    QApplication,
+    QDialog,
+    QDialogButtonBox,
+    QVBoxLayout,
+    QComboBox,
+    QLabel,
+)
 
 
 class Decimate(QDialog):
-
     def __init__(self, factors, parent=None):
 
         QDialog.__init__(self, parent)
@@ -38,7 +43,7 @@ class Decimate(QDialog):
 def main():
 
     app = QApplication(sys.argv)
-    app.setApplicationName('Decimate')
+    app.setApplicationName("Decimate")
     decimate_selection = Decimate([2, 4, 8])
     decimate_selection.show()
     if decimate_selection.exec_():
@@ -46,5 +51,5 @@ def main():
     sys.exit(app.quit())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
