@@ -402,7 +402,10 @@ class BDF:
         self.trig["count"] = self._trigger_count()
 
         time = np.append(0, np.diff(self.trig["idx"])) / self.hdr["freq"][0]
-        self.trig["time"] = np.vstack([self.trig["val"], time])
+        if self.trig["idx"]:
+            self.trig["time"] = np.vstack([self.trig["val"], time])
+        else:
+            self.trig["time"] = None
 
     def _trigger_count(self):
         """ Return unique trigger values and count. """
