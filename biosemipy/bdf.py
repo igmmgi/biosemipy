@@ -113,6 +113,8 @@ class BDF:
             self._trigger_info()
             self.time = np.arange(0, np.size(self.data, 1)) / self.freq
             self._update_header(chans)
+        
+            print("Finished")
 
     def write(self, fname=None):
         """
@@ -159,6 +161,8 @@ class BDF:
 
         dat = np.concatenate([hdr, bdf])
         dat.astype("uint8").tofile(fname)
+        
+        print("Finished")
 
     def merge(self, fname, *args):
         """
@@ -402,7 +406,7 @@ class BDF:
         self.trig["count"] = self._trigger_count()
 
         time = np.append(0, np.diff(self.trig["idx"])) / self.hdr["freq"][0]
-        if self.trig["idx"]:
+        if len(self.trig["idx"]) > 0:
             self.trig["time"] = np.vstack([self.trig["val"], time])
         else:
             self.trig["time"] = None

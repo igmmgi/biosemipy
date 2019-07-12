@@ -702,7 +702,12 @@ class DataViewer(QMainWindow):
 
     def on_clear_file_clicked(self):
         """ Clear current plot. """
-
+       
+        # if x_scroll on need to turn off before clearing plot
+        if self.scale["x_scroll"]:
+            self.on_x_scroll_clicked()
+       
+        # reset
         self.fname = None
         self.data = None
         self.time = None
