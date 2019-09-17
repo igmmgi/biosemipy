@@ -1,5 +1,5 @@
-"""
-Python module to read BioSemi EEG data files.
+""" 
+Python module to read BioSemi EEG data files.  
 """
 import numpy as np
 from numba import jit
@@ -113,7 +113,7 @@ class BDF:
             self._trigger_info()
             self.time = np.arange(0, np.size(self.data, 1)) / self.freq
             self._update_header(chans)
-        
+
             print("Finished")
 
     def write(self, fname=None):
@@ -161,7 +161,7 @@ class BDF:
 
         dat = np.concatenate([hdr, bdf])
         dat.astype("uint8").tofile(fname)
-        
+
         print("Finished")
 
     def merge(self, fname, *args):
@@ -348,9 +348,12 @@ class BDF:
         :param chans: list of channels
         """
 
+        chans_bool = np.zeros(self.hdr["n_chans"], dtype=bool)
+        chans_bool[chans] = True
+
         data, trig, status = _bdf2matrix(
             bdf_dat,
-            chans,
+            chans_bool,
             self.hdr["scale"],
             self.hdr["n_chans"],
             self.hdr["n_recs"],
@@ -423,9 +426,9 @@ def _bdf2matrix(bdf_dat, chans, scale, n_chans, n_recs, n_samps):
     """
     Take remaining data in bdf_dat and assign to n channels
     by n time points numpy matrix.
-    :param bdf_dat: numpy vector
-    :param chans: int
-    :param scale: numpy vector
+    :param bdf_dat: numpy matrix
+    :param chans: numpy bool array
+    :param scale: numpy array
     :param n_chans: int
     :param n_recs: int
     :param n_samps: int
@@ -440,7 +443,7 @@ def _bdf2matrix(bdf_dat, chans, scale, n_chans, n_recs, n_samps):
     for rec in range(n_recs):
         idx = 0
         for chan in range(n_chans):
-            if chan in chans:
+            if chans[chan]:
                 if chan < (n_chans - 1):
                     for samp in range(n_samps):
                         val1 = np.int32(bdf_dat[pos]) << 8
