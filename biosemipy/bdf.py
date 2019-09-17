@@ -435,7 +435,7 @@ def _bdf2matrix(bdf_dat, chans, scale, n_chans, n_recs, n_samps):
     :return: numpy matrix (channels by timepoints)
     """
 
-    data = np.zeros((len(chans) - 1, n_recs * n_samps), dtype=np.float64)
+    data = np.zeros((np.sum(chans) - 1, n_recs * n_samps), dtype=np.float64)
     trig = np.zeros(n_recs * n_samps, dtype=np.int16)
     status = np.zeros(n_recs * n_samps, dtype=np.int16)
 
