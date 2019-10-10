@@ -794,7 +794,8 @@ class DataViewer(QMainWindow):
 
     def on_x_scroll_clicked(self):
         """ Toggle on/off x-scale scroll. """
-
+        
+        print(" Toggle on/off x-scale scroll." )
         self.scale["x_scroll"] = not self.scale["x_scroll"]
         if self.scale["x_scroll"]:
             self.gui.x_scroll.setText("X Scroll Auto (off)")
@@ -806,8 +807,6 @@ class DataViewer(QMainWindow):
     def on_x_scroll_pos_slider(self):
         """ Change x-scale position """
 
-        print(" Change x-scale position")
-        print(self.scale)
         self.scale["xmin"] = self.gui.x_scroll_pos_slider.value()
         self.scale["xmax"] = self.gui.x_scroll_pos_slider.value() + self.scale["xrange"]
         if self.scale["xmax"] >= np.shape(self.data)[1]:
@@ -836,20 +835,21 @@ class DataViewer(QMainWindow):
     def inc_x_scale(self):
         """ Increment the x scale by scale scroll speed. """
 
-        self.scale["xmin"] += self.scale["x_scroll_speed"]
-        self.scale["xmax"] += self.scale["x_scroll_speed"]
-        self.gui.x_scale_slider.blockSignals(True)
-        self.gui.x_scale_slider.setValue(self.scale["xmax"])
-        self.gui.x_scale_slider.blockSignals(False)
+        if self.scale["xmax"] + self.scale["x_scroll_speed"] < np.shape(self.data)[1]:
+            self.scale["xmin"] += self.scale["x_scroll_speed"]
+            self.scale["xmax"] += self.scale["x_scroll_speed"]
+            self.gui.x_scale_slider.blockSignals(True)
+            self.gui.x_scale_slider.setValue(self.scale["xmax"])
+            self.gui.x_scale_slider.blockSignals(False)
 
-        self.x_region.setRegion(
-            [
-                self.x_region.lines[1].value()
-                + self.time[self.scale["x_scroll_speed"]],
-                self.x_region.lines[0].value()
-                + self.time[self.scale["x_scroll_speed"]],
-            ]
-        )
+            self.x_region.setRegion(
+                [
+                    self.x_region.lines[1].value()
+                    + self.time[self.scale["x_scroll_speed"]],
+                    self.x_region.lines[0].value()
+                    + self.time[self.scale["x_scroll_speed"]],
+                ]
+            )
 
     def on_toggle_events_clicked(self):
         """ Toggle on/off show/hide events in main plot window. """
