@@ -702,11 +702,11 @@ class DataViewer(QMainWindow):
 
     def on_clear_file_clicked(self):
         """ Clear current plot. """
-       
+
         # if x_scroll on need to turn off before clearing plot
         if self.scale["x_scroll"]:
             self.on_x_scroll_clicked()
-       
+
         # reset
         self.fname = None
         self.data = None
@@ -773,6 +773,8 @@ class DataViewer(QMainWindow):
         self.scale["xmax"] += val
         if self.scale["xmax"] <= self.scale["xmin"]:
             self.scale["xmax"] = self.scale["xmin"] + 10
+        if self.scale["xmax"] >= np.shape(self.data)[1]:
+            self.scale["xmax"] = np.shape(self.data)[1] - 1
         self.scale["xrange"] = self.scale["xmax"] - self.scale["xmin"]
         self.gui.x_scale_slider.blockSignals(True)
         self.gui.x_scale_slider.setValue(self.gui.x_scale_slider.value() + val)
@@ -802,14 +804,16 @@ class DataViewer(QMainWindow):
             self.timer.stop()
 
     def on_x_scroll_pos_slider(self):
-        """ Change x-scale position"""
+        """ Change x-scale position """
 
+        print(" Change x-scale position")
+        print(self.scale)
         self.scale["xmin"] = self.gui.x_scroll_pos_slider.value()
         self.scale["xmax"] = self.gui.x_scroll_pos_slider.value() + self.scale["xrange"]
         if self.scale["xmax"] >= np.shape(self.data)[1]:
             self.scale["xmax"] = np.shape(self.data)[1] - 1
         if self.scale["xmin"] >= self.scale["xmax"]:
-            self.scale["xmin"] = self.scale["xmax"] - self.scale["xrange"]
+            self.scale["xmin"] = self.scale["xmax"] - self.scale["xrange"] 
         self.scale["xrange"] = self.scale["xmax"] - self.scale["xmin"]
         self.update_plot()
 
