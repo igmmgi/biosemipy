@@ -74,8 +74,8 @@ class DataViewer(QMainWindow):
         # cursor for selected channel
         self.channel_selected = None
         self.cursor_on = False
-        self.cursor_x_line = pg.InfiniteLine(angle=90, movable=False)
-        self.cursor_y_line = pg.InfiniteLine(angle=0, movable=False)
+        self.cursor_x_line = pg.InfiniteLine(angle=90, movable=False, name="x_cursor")
+        self.cursor_y_line = pg.InfiniteLine(angle=0, movable=False, name="y_cursor")
         self.cursor_label = pg.TextItem(anchor=(0.5, 1))
 
         # x-region
@@ -97,7 +97,6 @@ class DataViewer(QMainWindow):
         self.label_items = []
         self.channel_selection = []
         self.event_items = []
-        self.n_events_visable = 0
 
         # main gui
         self.gui = Ui_MainWindow()
@@ -794,8 +793,8 @@ class DataViewer(QMainWindow):
 
     def on_x_scroll_clicked(self):
         """ Toggle on/off x-scale scroll. """
-        
-        print(" Toggle on/off x-scale scroll." )
+
+        print(" Toggle on/off x-scale scroll.")
         self.scale["x_scroll"] = not self.scale["x_scroll"]
         if self.scale["x_scroll"]:
             self.gui.x_scroll.setText("X Scroll Auto (off)")
@@ -812,7 +811,7 @@ class DataViewer(QMainWindow):
         if self.scale["xmax"] >= np.shape(self.data)[1]:
             self.scale["xmax"] = np.shape(self.data)[1] - 1
         if self.scale["xmin"] >= self.scale["xmax"]:
-            self.scale["xmin"] = self.scale["xmax"] - self.scale["xrange"] 
+            self.scale["xmin"] = self.scale["xmax"] - self.scale["xrange"]
         self.scale["xrange"] = self.scale["xmax"] - self.scale["xmin"]
         self.update_plot()
 
@@ -854,6 +853,7 @@ class DataViewer(QMainWindow):
     def on_toggle_events_clicked(self):
         """ Toggle on/off show/hide events in main plot window. """
 
+        print("Show events")
         self.plot_events = not self.plot_events
         if self.plot_events:
             self.gui.toggle_events.setText("Hide Events")
@@ -938,7 +938,9 @@ class DataViewer(QMainWindow):
 
             colour = self.colours(int(colour_idx[channel]), bytes=True)
 
-            channel_item = pg.PlotCurveItem(pen=pg.mkPen(colour, width=self.line_width))
+            channel_item = pg.PlotCurveItem(
+                pen=pg.mkPen(colour, width=self.line_width), name="Data"
+            )
             channel_item.setClickable(self)
             channel_item.sigClicked.connect(self.on_channel_selected)
             self.channel_items.append(channel_item)
@@ -999,23 +1001,28 @@ class DataViewer(QMainWindow):
         val = self.events["val"]
         xmin, xmax = self.scale["xmin"], self.scale["xmax"]
 
-        for _ in range(self.n_events_visable):
-            self.gui.plot.removeItem(self.gui.plot.plotItem.items[-1])
+        for plt_item in self.gui.plot.plotItem.items:
+            try:
+                if plt_item.name() == "Event":
+                    self.gui.plot.removeItem(plt_item)
+            except AttributeError:
+                pass
 
         visible_idx = (idx >= xmin) & (idx <= xmax)
         events = idx[visible_idx]
         values = val[visible_idx]
 
-        self.n_events_visable = 0
         for item in zip(events, values):
             event = pg.InfiniteLine(
-                [self.time[item[0]], 0], pen=pg.mkPen("w"), label=str(item[1])
+                [self.time[item[0]], 0],
+                pen=pg.mkPen("w"),
+                label=str(item[1]),
+                name="Event",
             )
             event.label.setFont(self.font)
             event.label.setPosition(0.95)
             event.setAngle(90)
             self.gui.plot.addItem(event, ignoreBounds=False)
-            self.n_events_visable += 1
 
     def crop_x_dimension(self):
         """ Crop data along the x-dimnsion for plotting. """
