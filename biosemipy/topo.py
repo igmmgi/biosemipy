@@ -1,6 +1,4 @@
-# """ EEG Topographic Plots """
-# import importlib.resources as pkg_resources
-# from . import layouts
+""" EEG Topographic Plots """
 
 import os
 import pandas as pd
@@ -14,17 +12,64 @@ from scipy.interpolate import Rbf
 class Topo:
     """ EEG Topographic Plots """
 
-    def __init__(self, data=None, layout_file="biosemi64.csv"):
+    def __init__(
+        self,
+        layout_file="biosemi64.csv",
+        z_scale=None,
+        colormap="jet",
+        labels=True,
+        labels_kwargs={},
+        markers=True,
+        markers_kwargs={},
+        roi_outline=False,
+        roi_outline_kwargs={},
+        title=True,
+        title_kwargs={},
+    ):
 
-        self.data = data
-        self.data_interp = None
-        self.fills = None
-        self.layout = None
         self.read_layout(layout_file)
         self.outline = self.generate_outline()
+        self.z_scale = z_scale
+        self.colormap = colormap
+        self.labels = labels
+        self.labels_kwargs = labels_kwargs
+        self.markers = markers
+        self.markers_kwargs = markers_kwargs
+        self.roi_outline = roi_outline
+        self.roi_outline_kwargs = roi_outline_kwargs
+        self.title = title
+        self.title_kwargs = title_kwargs
+
+        self.fills = None
+        self.lines = None
         self.fig = plt.figure()
         self.ax = plt.gca()
         self.cb = None
+
+        self._setup()
+
+    def _setup(self):
+
+        plt.axis("equal")
+        plt.axis("off")
+        plt.xlim(-1.15, 1.15)
+        plt.ylim(-1.15, 1.15)
+
+        # draw head shape
+        for item in self.outline.values():
+            self.ax.add_patch(item)
+
+        if self.markers:
+            self.plot_markers(**self.markers_kwargs)
+
+        if self.labels:
+            self.plot_labels(**self.labels_kwargs)
+
+        if self.roi_outline:
+            self.draw_roi_outline(**self.roi_outline_kwargs)
+
+        if self.title:
+            self.plot_title(**self.title_kwargs)
 
     def generate_outline(self, linewidth=2):
         """ Generate head, nose, and ear outlines for plot. """
@@ -103,18 +148,17 @@ class Topo:
         self.layout["x"] = x
         self.layout["y"] = y
 
-    def interp_data(self, res=100):
+    def interp_data(self, data, res=100):
         """ Interperet data using scipy.interpolate.Rbf. """
 
-        interp = Rbf(self.layout["x"], self.layout["y"], self.data, function="cubic")
+        interp = Rbf(self.layout["x"], self.layout["y"], data, function="cubic")
 
         # x, y points slightly beyond head circumference
         x, y = np.meshgrid(np.linspace(-1.05, 1.05, res), np.linspace(1.05, -1.05, res))
-        data = interp(x, y)
 
-        self.data_interp = x, y, data
+        self.data = x, y, interp(x, y)
 
-    def roi_outline(self, rois=None, color="black", border_size=0.1):
+    def draw_roi_outline(self, rois=None, color="black", border_size=0.1):
 
         # points forming a circle
         border_points = np.arange(0, 2 * np.pi + np.pi / 30, 2 * np.pi / 30)
@@ -126,7 +170,7 @@ class Topo:
         pos_x = np.array(self.layout["x"])
         pos_y = np.array(self.layout["y"])
 
-        for roi in rois:
+        for idx, roi in enumerate(rois):
             roi_pos_x = np.array([])
             roi_pos_y = np.array([])
             for point in zip(labels, pos_x, pos_y):
@@ -137,7 +181,7 @@ class Topo:
 
             roi_border = ConvexHull(np.stack([roi_pos_x, roi_pos_y]).T)
             for border in roi_border.simplices:
-                plt.plot(roi_pos_x[border], roi_pos_y[border], color, zorder=3)
+                plt.plot(roi_pos_x[border], roi_pos_y[border], color[idx], zorder=3)
 
     def plot_markers(self, **kwargs):
         """ 
@@ -186,7 +230,6 @@ class Topo:
             label: str
             colorbar_pos: list
         """
-
         # additional kwargs defaults
         label = "Amplitude ($\mu$V)"
         if "label" in kwargs:
@@ -214,15 +257,16 @@ class Topo:
         if "colors" not in kwargs:
             kwargs["colors"] = "grey"
 
-        lines = plt.contour(
-            self.data_interp[0],
-            self.data_interp[1],
-            self.data_interp[2],
-            zorder=3,
-            **kwargs
+        # remove old contour is updating data
+        if self.lines is not None:
+            for line in self.lines.collections:
+                line.remove()
+
+        self.lines = plt.contour(
+            self.data[0], self.data[1], self.data[2], zorder=3, **kwargs
         )
 
-        for line in lines.collections:
+        for line in self.lines.collections:
             line.set_clip_path(self.outline["head"])
 
     def plot_title(self, **kwargs):
@@ -242,69 +286,39 @@ class Topo:
 
     def plot(
         self,
+        data,
         z_scale=None,
-        colormap="jet",
+        contour_lines=True,
         colorbar=True,
         colorbar_kwargs={},
-        labels=True,
-        labels_kwargs={},
-        markers=True,
-        markers_kwargs={},
-        roi_outline=False,
-        roi_outline_kwargs={},
-        contour_lines=True,
         contour_lines_kwargs={},
-        title=True,
-        title_kwargs={},
     ):
 
-        plt.axis("equal")
-        plt.axis("off")
-        plt.xlim(-1.15, 1.15)
-        plt.ylim(-1.15, 1.15)
-
-        # draw head shape
-        for item in self.outline.values():
-            self.ax.add_patch(item)
-
-        if markers:
-            self.plot_markers(**markers_kwargs)
-
-        if labels:
-            self.plot_labels(**labels_kwargs)
-
-        if roi_outline:
-            self.roi_outline(**roi_outline_kwargs)
-
-        if title:
-            self.plot_title(**title_kwargs)
-
-        if self.data is None:
-            return
-
         # interpolate and plot
-        self.interp_data()
+        self.interp_data(data)
         if z_scale is not None:
             z_scale = np.linspace(z_scale[0], z_scale[1], z_scale[2])
 
         self.fills = plt.contourf(
-            self.data_interp[0],
-            self.data_interp[1],
-            self.data_interp[2],
+            self.data[0],
+            self.data[1],
+            self.data[2],
             levels=z_scale,
-            cmap=colormap,
+            cmap="jet",
             zorder=1,
         )
         for fill in self.fills.collections:
             fill.set_clip_path(self.outline["head"])
 
-        if colorbar:
+        if colorbar and self.cb is None:
             self.plot_colorbar(**colorbar_kwargs)
 
         if contour_lines:
             self.plot_contour_lines(**contour_lines_kwargs)
 
     def show(self):
+        plt.ion()
+        plt.pause(0.001)
         plt.show()
 
 
@@ -312,36 +326,35 @@ def run_examples():
 
     # Example 1
     topo = Topo()
-    topo.plot()
     topo.show()
 
     # Example 2
-    topo = Topo(data=np.random.rand(64))
-    topo.plot()
+    topo = Topo()
+    topo.plot(data=np.random.randn(64) * 10)
     topo.show()
 
     # Example 3
-    topo = Topo(data=np.random.rand(64))
-    topo.plot(contour_lines=False)
+    topo = Topo()
+    topo.plot(data=np.random.randn(64), contour_lines=True)
     topo.show()
 
     # Example 4
-    topo = Topo(data=None, layout_file="biosemi256.csv")
-    topo.plot()
+    topo = Topo(layout_file="biosemi256.csv")
+    topo.plot(data=np.random.randn(256) * 10)
     topo.show()
 
     # Example 5
-    topo = Topo(data=None)
-    topo.plot(
+    topo = Topo(
         roi_outline=True,
         roi_outline_kwargs={
-            "rois": [["Cz", "C1", "C2"], ["PO7", "P7"], ["PO8", "P8"]],
-            "color": "black",
+            "rois": [
+                ["Cz", "C1", "C2"],
+                ["PO7", "P7"],
+                ["PO8", "P8"],
+                ["Fp1", "Fp2", "FpZ"],
+            ],
+            "color": ["black", "blue", "blue", "red"],
         },
-    )
-    topo.plot(
-        roi_outline=True,
-        roi_outline_kwargs={"rois": [["Fp1", "Fp2", "FpZ"]], "color": "red"},
     )
     topo.show()
 

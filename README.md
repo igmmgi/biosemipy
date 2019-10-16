@@ -50,7 +50,7 @@ python -m biosemipy.dataviewer filename1.bdf
 generate_outline \
 read_layout \
 interp_data \
-roi_outline \
+draw_roi_outline \
 plot_markers \
 plot_labels \
 plot_colorbar \
@@ -60,9 +60,9 @@ plot \
 show
 
 #### Basic Example biosemipy.topo
-from biosemipy import topo
+from biosemipy.topo import Topo
 
-topo_plt = topo.Topo() \
+topo_plt = Topo() \
 topo_plt.plot() \
 topo_plt.show()
 

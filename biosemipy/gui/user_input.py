@@ -18,9 +18,9 @@ class UserInput(QDialog):
         button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
-        
+
         self.user_input = QLineEdit()
-        
+
         layout = QFormLayout()
         layout.addRow(QLabel(question), self.user_input)
         layout.addWidget(button_box)

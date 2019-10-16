@@ -22,6 +22,7 @@ from matplotlib import cm
 from mne.filter import filter_data
 
 from biosemipy.bdf import BDF
+from biosemipy.topo import Topo
 from biosemipy.gui.channel_difference import ChannelDifference
 from biosemipy.gui.channel_selection import ChannelSelection
 from biosemipy.gui.plot import Ui_MainWindow
@@ -88,6 +89,7 @@ class DataViewer(QMainWindow):
         self.data = None
         self.time = None
         self.layout_file = layout_file
+        self.topo = Topo(layout_file="biosemi72.csv")
         self.n_channels = None
         self.labels_org = None
         self.labels_selected = None
@@ -117,6 +119,7 @@ class DataViewer(QMainWindow):
 
         self.setWindowTitle("Data Viewer")
         self.setGeometry(0, 0, 1920, 1080)
+
 
     def set_slider_values(self):
         """ Set appripriate min/max values for x/y-scale sliders. """
@@ -1146,6 +1149,13 @@ class DataViewer(QMainWindow):
         if self.fname is not None:
             self.set_plot()
             self.update_plot()
+
+
+def time_to_idx(t1, t2, time_array):
+    """ time_to_idx """
+    idx1 = np.abs(time_array - t1).argmin()
+    idx2 = np.abs(time_array - t2).argmin()
+    return idx1, idx2
 
 
 def run(fname=None):
