@@ -333,11 +333,12 @@ class DataViewer(QMainWindow):
         file_menu = menu_bar.addMenu("&File")
         file_menu.addAction(read_bdf_action)
 
-        if not file_loaded:
-            return
-
         merge_file_action = QAction("&Merge BDF Files", self)
         merge_file_action.triggered.connect(self.on_merge_file_clicked)
+        file_menu.addAction(merge_file_action)
+
+        if not file_loaded:
+            return
 
         write_file_action = QAction("&Write BDF File", self)
         write_file_action.triggered.connect(self.on_write_file_clicked)
@@ -578,7 +579,8 @@ class DataViewer(QMainWindow):
         """ Merge 2 (or more) *.bdf files. """
 
         # need to clear any currently loaded file
-        self.on_clear_file_clicked()
+        if self.fname:
+            self.on_clear_file_clicked()
 
         filenames = QFileDialog.getOpenFileNames(
             self, "Select File", "", "BDF Files (*.bdf)"
