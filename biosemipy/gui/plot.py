@@ -272,7 +272,7 @@ class Ui_MainWindow(object):
         self.y_scale_inc.setText(_translate("MainWindow", "Y Scale (+)"))
         self.y_spacing_inc.setText(_translate("MainWindow", "Y Spacing (+)"))
         self.x_scale_inc.setText(_translate("MainWindow", "X (+)"))
-        self.y_scale_type.setText(_translate("MainWindow", "Scale Type"))
+        self.y_scale_type.setText(_translate("MainWindow", "Scale Type (butterfly)"))
         self.y_spacing_dec.setText(_translate("MainWindow", "Y Spacing (-)"))
         self.toggle_events.setText(_translate("MainWindow", "Show Events"))
         self.x_scale_dec.setText(_translate("MainWindow", "X (-)"))

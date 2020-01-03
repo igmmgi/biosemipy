@@ -737,6 +737,7 @@ class DataViewer(QMainWindow):
         """ Change y-scale type (vertical vs. butterfly). """
 
         self.scale["type"].rotate(1)
+        self.gui.y_scale_type.setText("Scale Type ({})".format(self.scale["type"][1]))
         self.set_plot()
         self.update_plot()
 
