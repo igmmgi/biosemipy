@@ -241,10 +241,9 @@ class Topo:
             if key == colorbar_pos:
                 colorbar_pos = kwargs[key]
 
-        if colorbar_pos is None:
-            cbar_ax = self.fig.add_axes()
-        else:
-            cbar_ax = self.fig.add_axes(colorbar_pos)
+        cbar_ax = None
+        if colorbar_pos is not None:
+            cbar_ax = self.fig.add_subplot(colorbar_pos)
 
         self.cb = self.fig.colorbar(self.fills, cax=cbar_ax, **kwargs)
         self.cb.set_label(label, rotation=-90)
