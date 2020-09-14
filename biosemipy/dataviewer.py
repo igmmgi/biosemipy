@@ -539,6 +539,7 @@ class DataViewer(QMainWindow):
                 chans = self.labels_selected
 
             self.bdf.rereference(chans)
+            self.set_plot()
             self.update_plot()
 
     def on_file_info_clicked(self):
