@@ -19,7 +19,7 @@ from PyQt5.QtWidgets import (
     QMessageBox,
 )
 from matplotlib import cm
-from mne.filter import filter_data
+from scipy import signal
 
 from biosemipy.bdf import BDF
 from biosemipy.topo import Topo
@@ -433,7 +433,8 @@ class DataViewer(QMainWindow):
         selection.show()
         if selection.exec_():
             freq = selection.get_selection()
-            self.data = filter_data(self.data, self.bdf.freq, l_freq=freq, h_freq=None)
+            b, a = signal.butter(2, (float(freq) / (self.bdf.freq/2)), 'high')
+            self.data = signal.filtfilt(b, a, self.data)
             self.update_plot()
 
     def on_low_pass_filter_action(self):
@@ -443,7 +444,8 @@ class DataViewer(QMainWindow):
         selection.show()
         if selection.exec_():
             freq = selection.get_selection()
-            self.data = filter_data(self.data, self.bdf.freq, l_freq=None, h_freq=freq)
+            b, a = signal.butter(6, (float(freq) / (self.bdf.freq/2)), 'low')
+            self.data = signal.filt(b, a, self.data)
             self.update_plot()
 
     def on_decimate_file_clicked(self):
