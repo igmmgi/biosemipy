@@ -89,7 +89,7 @@ class DataViewer(QMainWindow):
         self.data = None
         self.time = None
         self.layout_file = layout_file
-        self.topo = Topo(layout_file="biosemi72.csv")
+        self.topo = Topo(layout_file="layouts/biosemi72.csv")
         self.n_channels = None
         self.labels_org = None
         self.labels_selected = None

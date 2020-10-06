@@ -14,7 +14,7 @@ class Topo:
 
     def __init__(
         self,
-        layout_file="biosemi64.csv",
+        layout_file="layouts/biosemi64.csv",
         z_scale=None,
         colormap="jet",
         labels=True,
@@ -119,7 +119,6 @@ class Topo:
     def read_layout(self, layout_name, fit_coords=True):
         """ Read BioSemi position coordinate file. """
 
-        layout_name = os.path.join(os.path.dirname(__file__), "layouts", layout_name)
         self.layout = pd.read_csv(layout_name)
         self._polar2cart_coordinates()
         if fit_coords:
@@ -151,7 +150,7 @@ class Topo:
     def interp_data(self, data, res=100):
         """ Interperet data using scipy.interpolate.Rbf. """
 
-        interp = Rbf(self.layout["x"], self.layout["y"], data, function="cubic")
+        interp = Rbf(self.layout["x"], self.layout["y"], data)
 
         # x, y points slightly beyond head circumference
         x, y = np.meshgrid(np.linspace(-1.05, 1.05, res), np.linspace(1.05, -1.05, res))
@@ -338,7 +337,7 @@ def run_examples():
     topo.show()
 
     # Example 4
-    topo = Topo(layout_file="biosemi256.csv")
+    topo = Topo(layout_file="layouts/biosemi256.csv")
     topo.plot(data=np.random.randn(256) * 10)
     topo.show()
 
