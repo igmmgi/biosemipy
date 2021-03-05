@@ -615,7 +615,6 @@ class DataViewer(QMainWindow):
         self.cursor_on = not self.cursor_on
         if not self.cursor_on:
             self.channel_selected = None
-            print(self.channel_selected)
 
         if self.cursor_on:
             self.proxy = pg.SignalProxy(
@@ -1133,11 +1132,11 @@ class DataViewer(QMainWindow):
         self.gui.layout.removeWidget(self.gui.plot)
         self.gui.plot = pg.PlotWidget(enableMenu=False)
         self.gui.layout.insertWidget(0, self.gui.plot)
-        # if self.fname is None:
-        #     self.set_plot_blank()
-        # else:
-        #     self.set_plot()
-        #     self.update_plot()
+        if self.fname is None:
+            self.set_plot_blank()
+        else:
+            self.set_plot()
+            self.update_plot()
 
     def select_font_size(self):
         """ Change the text fontsize. """
