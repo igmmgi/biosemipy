@@ -16,7 +16,7 @@ from PyQt5.QtWidgets import (
     QFileDialog,
     QInputDialog,
     QMainWindow,
-    QMessageBox,
+    QMessageBox
 )
 from matplotlib import cm
 from scipy import signal
@@ -89,7 +89,7 @@ class DataViewer(QMainWindow):
         self.data = None
         self.time = None
         self.layout_file = layout_file
-        self.topo = Topo(layout_file="layouts/biosemi72.csv")
+        self.topo = Topo(layout_file="biosemi72.csv")
         self.n_channels = None
         self.labels_org = None
         self.labels_selected = None
@@ -1110,7 +1110,7 @@ class DataViewer(QMainWindow):
         """ Select colourmap used for the plot lines. """
 
         item, ok = QInputDialog.getItem(
-            self, "Select Colourmap", "Colourmaps", cm.cmap_d.keys()
+            self, "Select Colourmap", "Colourmaps", cm.cmaps_listed.keys()
         )
 
         if ok and item:
