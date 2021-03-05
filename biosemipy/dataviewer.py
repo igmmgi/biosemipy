@@ -629,7 +629,6 @@ class DataViewer(QMainWindow):
     def mouse_moved(self, evt):
         """ Show x/y label of mouse cursor. """
 
-        label_offset = np.ptp(self.gui.plot.getAxis("left").range) * 0.01
 
         if self.gui.plot.sceneBoundingRect().contains(evt[0]):
             point = self.gui.plot.plotItem.vb.mapSceneToView(evt[0])
@@ -653,6 +652,7 @@ class DataViewer(QMainWindow):
                     txt = "NA: x={:.3f}, y={:.3f}".format(x, y)
                     txt = '<span style="background-color:#FFFF00">' + txt + "</span>"
 
+            label_offset = np.ptp(self.gui.plot.getAxis("left").range) * 0.01
             self.cursor_label.setHtml(txt)
             self.cursor_label.setPos(point.x(), point.y() + label_offset)
             self.cursor_x_line.setPos(point.x())
