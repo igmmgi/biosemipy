@@ -1123,6 +1123,9 @@ class DataViewer(QMainWindow):
     def invert_theme(self):
         """ Toggle background/foreground with white/black. """
 
+        if self.cursor_on:
+            self.on_toggle_cursor_clicked()
+
         self.theme.rotate(1)
         pg.setConfigOptions(background=self.theme[0], foreground=self.theme[1])
         self.gui.layout.removeWidget(self.gui.plot)
