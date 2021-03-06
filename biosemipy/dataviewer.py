@@ -16,7 +16,7 @@ from PyQt5.QtWidgets import (
     QFileDialog,
     QInputDialog,
     QMainWindow,
-    QMessageBox
+    QMessageBox,
 )
 from matplotlib import cm
 from scipy import signal
@@ -433,7 +433,7 @@ class DataViewer(QMainWindow):
         selection.show()
         if selection.exec_():
             freq = selection.get_selection()
-            b, a = signal.butter(2, (float(freq) / (self.bdf.freq/2)), 'high')
+            b, a = signal.butter(2, (float(freq) / (self.bdf.freq / 2)), "high")
             self.data = signal.filtfilt(b, a, self.data)
             self.update_plot()
 
@@ -444,7 +444,7 @@ class DataViewer(QMainWindow):
         selection.show()
         if selection.exec_():
             freq = selection.get_selection()
-            b, a = signal.butter(6, (float(freq) / (self.bdf.freq/2)), 'low')
+            b, a = signal.butter(6, (float(freq) / (self.bdf.freq / 2)), "low")
             self.data = signal.filt(b, a, self.data)
             self.update_plot()
 
@@ -629,7 +629,6 @@ class DataViewer(QMainWindow):
     def mouse_moved(self, evt):
         """ Show x/y label of mouse cursor. """
 
-
         if self.gui.plot.sceneBoundingRect().contains(evt[0]):
             point = self.gui.plot.plotItem.vb.mapSceneToView(evt[0])
             txt = ""
@@ -646,11 +645,11 @@ class DataViewer(QMainWindow):
                     if self.scale["type"][0] == "vertical":
                         y -= self.scale["yoffset"][idx]
                     chn = self.labels_selected[idx]
-                    txt = "{}: x={:.3f}, y={:.3f}".format(chn, x, y)
-                    txt = '<span style="background-color:#FFFF00">' + txt + "</span>"
+                    txt = "{}: x={:.2f}, y={:.2f}".format(chn, x, y)
+                    txt = '<span style="background-color:#797777">' + txt + "</span>"
                 else:
-                    txt = "NA: x={:.3f}, y={:.3f}".format(x, y)
-                    txt = '<span style="background-color:#FFFF00">' + txt + "</span>"
+                    txt = "NA: x={:.2f}, y={:.2f}".format(x, y)
+                    txt = '<span style="background-color:#797777">' + txt + "</span>"
 
             label_offset = np.ptp(self.gui.plot.getAxis("left").range) * 0.01
             self.cursor_label.setHtml(txt)
