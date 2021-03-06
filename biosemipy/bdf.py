@@ -1,5 +1,5 @@
-""" 
-Python module to read BioSemi EEG data files.  
+"""
+Python module to read BioSemi EEG data files.
 """
 import numpy as np
 from numba import jit
@@ -88,7 +88,7 @@ class BDF:
             self.hdr["dmin"] = np.array([int(f.read(8)) for _ in ch])
             self.hdr["dmax"] = np.array([int(f.read(8)) for _ in ch])
             self.hdr["filter"] = [f.read(80).decode().strip() for _ in ch]
-            self.hdr["n_samps"] = [np.int(f.read(8)) for _ in ch]
+            self.hdr["n_samps"] = [int(f.read(8)) for _ in ch]
             self.hdr["reserved"] = [f.read(32).decode().strip() for _ in ch]
             self.hdr["scale"] = np.array(
                 (self.hdr["pmax"] - self.hdr["pmin"])
@@ -114,7 +114,6 @@ class BDF:
             self.time = np.arange(0, np.size(self.data, 1)) / self.freq
             self._update_header(chans)
 
-            print("Finished")
 
     def write(self, fname=None):
         """
@@ -162,7 +161,6 @@ class BDF:
         dat = np.concatenate([hdr, bdf])
         dat.astype("uint8").tofile(fname)
 
-        print("Finished")
 
     def merge(self, fname, *args):
         """
@@ -249,11 +247,11 @@ class BDF:
 
     def decimate(self, factor):
         """
-        Downsample bdf file by a factor of 2,4, or 8 using
+        Downsample bdf file by a factor of 2, 4, 8, or 16 using
         scipy.signal.decimate.
         """
 
-        assert factor in [1, 2, 4, 8]
+        assert factor in [1, 2, 4, 8, 16]
         self.data = decimate(self.data, factor)
 
         # adjust header
@@ -343,7 +341,7 @@ class BDF:
         return np.sort(np.unique(chan_out)).tolist()
 
     def _bdf2matrix(self, bdf_dat, chans):
-        """ Convert vector to matric (channels by timepoints).
+        """Convert vector to matric (channels by timepoints).
         :param bdf_dat: numpy vector
         :param chans: list of channels
         """

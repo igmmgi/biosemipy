@@ -184,7 +184,7 @@ class Topo:
                 plt.plot(roi_pos_x[border], roi_pos_y[border], color[idx], zorder=3)
 
     def plot_markers(self, **kwargs):
-        """ 
+        """
         Plot markers at x, y 2D coordinates on topo-plot.
         For kwargs, see matplotlib.pyplot.scatter
         """
@@ -198,7 +198,7 @@ class Topo:
         plt.scatter(self.layout["x"], self.layout["y"], zorder=3, **kwargs)
 
     def plot_labels(self, **kwargs):
-        """ 
+        """
         Plot labels at x, y 2D coordinates on topo-plot.
         For kwargs, see matplotlib.pyplot.annotate
         Additional kwargs:
@@ -223,7 +223,7 @@ class Topo:
                 plt.annotate(row["label"], (x, y), zorder=3, **kwargs)
 
     def plot_colorbar(self, **kwargs):
-        """ 
+        """
         Plot colorbar.
         For kwargs see matplotlib.pyplot.colorbar.
         Additional kwargs:

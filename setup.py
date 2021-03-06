@@ -8,13 +8,13 @@ setup(
     packages=["biosemipy"],
     license="MIT",
     install_requires=[
+        "matplotlib",
         "numba",
         "numpy",
+        "pandas",
         "pyqtgraph",
         "PyQt5",
-        "matplotlib",
         "scipy",
-        "pandas",
     ],
     zip_safe=False,
 )
