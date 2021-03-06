@@ -14,6 +14,7 @@ setup(
         "PyQt5",
         "matplotlib",
         "scipy",
+        "pandas",
     ],
     zip_safe=False,
 )
