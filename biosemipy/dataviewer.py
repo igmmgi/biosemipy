@@ -11,6 +11,7 @@ import pyqtgraph as pg
 from PyQt5 import QtGui
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import (
+    QApplication,
     QAbstractItemView,
     QAction,
     QFileDialog,
@@ -25,7 +26,7 @@ from biosemipy.bdf import BDF
 from biosemipy.topo import Topo
 from biosemipy.gui.channel_difference import ChannelDifference
 from biosemipy.gui.channel_selection import ChannelSelection
-from biosemipy.gui.plot import Ui_MainWindow
+from biosemipy.gui.control import Ui_MainWindow
 from biosemipy.gui.display_text import DisplayText
 from biosemipy.gui.events_table import EventsTable
 from biosemipy.gui.crop import Crop
@@ -55,16 +56,23 @@ class DataViewer(QMainWindow):
 
         super(DataViewer, self).__init__()
 
+        # required data fields
         self.fname = fname
-
-        # visuals
-        self.setWindowTitle("Data Viewer")
-        self.setGeometry(0, 0, 1920, 1080)
-        self.line_width = 1
-        self.theme = deque(["k", "w"])
-        self.colourmap = "rainbow"
-        self.colours = cm.get_cmap(self.colourmap)
-        self.font = QtGui.QFont("Monospace", 8)
+        self.bdf = None
+        self.data = None
+        self.time = None
+        self.layout_file = layout_file
+        self.topo = Topo(layout_file="biosemi72.csv")
+        self.n_channels = None
+        self.labels_org = None
+        self.labels_selected = None
+        self.events = None
+        self.plot_events = False
+        self.channels = channels
+        self.channel_items = []
+        self.label_items = []
+        self.channel_selection = []
+        self.event_items = []
 
         # signals/timers
         self.proxy = None
@@ -82,31 +90,25 @@ class DataViewer(QMainWindow):
         # x-region
         self.x_region = pg.LinearRegionItem()
         self.x_region_on = False
-        self.plot_events = False
 
-        # required data fields
-        self.bdf = None
-        self.data = None
-        self.time = None
-        self.layout_file = layout_file
-        self.topo = Topo(layout_file="biosemi72.csv")
-        self.n_channels = None
-        self.labels_org = None
-        self.labels_selected = None
-        self.events = None
-        self.channels = channels
-        self.channel_items = []
-        self.label_items = []
-        self.channel_selection = []
-        self.event_items = []
+        # plot
+        self.plot = pg.PlotWidget(enableMenu=False)
+        self.plot.setMouseEnabled(x=False, y=False)
 
         # main gui
         self.gui = Ui_MainWindow()
         self.gui.setupUi(self)
-        self.gui.plot = pg.PlotWidget(enableMenu=False)
-        self.gui.plot.setMouseEnabled(x=False, y=False)
-        self.gui.layout.insertWidget(0, self.gui.plot)
+        self.gui.layout.insertWidget(0, self.plot)
         self.scale = self.set_scale()
+
+        # visuals
+        self.line_width = 1
+        self.theme = deque(["k", "w"])
+        self.colourmap = "rainbow"
+        self.colours = cm.get_cmap(self.colourmap)
+        self.myfont = QtGui.QFont("Monospace", 8)
+        self.setWindowTitle("Data Viewer")
+        self.setGeometry(0, 0, 1280, 720)
 
         if self.fname:
             self.read_bdf_file()
@@ -117,8 +119,6 @@ class DataViewer(QMainWindow):
             self.set_menubar(file_loaded=False)
             self.set_plot_blank()
 
-        self.setWindowTitle("Data Viewer")
-        self.setGeometry(0, 0, 1920, 1080)
 
     def set_slider_values(self):
         """ Set appripriate min/max values for x/y-scale sliders. """
@@ -181,7 +181,7 @@ class DataViewer(QMainWindow):
         self.bdf = bdf
         self.data = bdf.data
         self.time = bdf.time
-        self.n_channels = np.shape(bdf.data)[0]
+        self.n_channels = np.shape(self.data)[0]
         self.labels_org = bdf.hdr["labels"][:-1]
         self.labels_selected = bdf.hdr["labels"][:-1]
         self.events = bdf.trig
@@ -618,7 +618,7 @@ class DataViewer(QMainWindow):
 
         if self.cursor_on:
             self.proxy = pg.SignalProxy(
-                self.gui.plot.scene().sigMouseMoved, rateLimit=60, slot=self.mouse_moved
+                self.plot.scene().sigMouseMoved, rateLimit=60, slot=self.mouse_moved
             )
         else:
             self.proxy = None
@@ -629,8 +629,8 @@ class DataViewer(QMainWindow):
     def mouse_moved(self, evt):
         """ Show x/y label of mouse cursor. """
 
-        if self.gui.plot.sceneBoundingRect().contains(evt[0]):
-            point = self.gui.plot.plotItem.vb.mapSceneToView(evt[0])
+        if self.plot.sceneBoundingRect().contains(evt[0]):
+            point = self.plot.plotItem.vb.mapSceneToView(evt[0])
             txt = ""
             if self.channel_selected is not None:
 
@@ -651,7 +651,7 @@ class DataViewer(QMainWindow):
                     txt = "NA: x={:.2f}, y={:.2f}".format(x, y)
                     txt = '<span style="background-color:#797777">' + txt + "</span>"
 
-            label_offset = np.ptp(self.gui.plot.getAxis("left").range) * 0.01
+            label_offset = np.ptp(self.plot.getAxis("left").range) * 0.01
             self.cursor_label.setHtml(txt)
             self.cursor_label.setPos(point.x(), point.y() + label_offset)
             self.cursor_x_line.setPos(point.x())
@@ -728,6 +728,7 @@ class DataViewer(QMainWindow):
         self.data = None
         self.time = None
         self.n_channels = None
+        self.channel_selected = None
         self.labels_org = None
         self.labels_selected = None
         self.events = None
@@ -760,19 +761,19 @@ class DataViewer(QMainWindow):
     def set_axes(self, plot_type):
         """ Set axes. """
 
-        self.gui.plot.setYRange(
+        self.plot.setYRange(
             self.scale["ymin"] - self.scale["yspacing_offset"],
             self.scale["ymax"] - self.scale["yspacing_offset"],
             padding=0.05,
         )
-        self.gui.plot.setXRange(
+        self.plot.setXRange(
             self.time[self.scale["xmin"]], self.time[self.scale["xmax"]], padding=0.05
         )
 
         if plot_type[0] == "vertical":
-            self.gui.plot.hideAxis("left")
+            self.plot.hideAxis("left")
         elif plot_type[0] == "butterfly":
-            self.gui.plot.showAxis("left")
+            self.plot.showAxis("left")
 
     def on_y_scale_slider(self):
         """ Change y-scale. """
@@ -923,11 +924,11 @@ class DataViewer(QMainWindow):
 
     def set_plot_blank(self):
         """ Reset plot to empty. """
-        self.gui.plot.setTitle(title=self.fname)
-        self.gui.plot.clear()
-        self.gui.plot.showGrid(x=True, y=True)
-        self.gui.plot.hideAxis("left")
-        self.gui.plot.hideAxis("bottom")
+        self.plot.setTitle(title=self.fname)
+        self.plot.clear()
+        self.plot.showGrid(x=True, y=True)
+        self.plot.hideAxis("left")
+        self.plot.hideAxis("bottom")
         self.gui.channel_selection.blockSignals(True)
         self.gui.channel_selection.clear()
         self.gui.channel_selection.blockSignals(False)
@@ -935,11 +936,11 @@ class DataViewer(QMainWindow):
     def set_plot(self):
         """ Reset plot. """
 
-        self.gui.plot.clear()
-        self.gui.plot.setTitle(title=os.path.split(self.fname)[1])
-        self.gui.plot.showGrid(x=True, y=True)
-        self.gui.plot.setLabel("bottom", "Time", units="S")
-        self.gui.plot.getAxis("bottom").tickFont = self.font
+        self.plot.clear()
+        self.plot.setTitle(title=os.path.split(self.fname)[1])
+        self.plot.showGrid(x=True, y=True)
+        self.plot.setLabel("bottom", "Time", units="S")
+        self.plot.getAxis("bottom").tickFont = self.myfont
 
         self.channel_items = []
         self.label_items = []
@@ -959,23 +960,23 @@ class DataViewer(QMainWindow):
             channel_item.setClickable(self)
             channel_item.sigClicked.connect(self.on_channel_selected)
             self.channel_items.append(channel_item)
-            self.gui.plot.addItem(channel_item)
+            self.plot.addItem(channel_item)
 
             self.labels_selected.append(self.labels_org[channel])
             label_item = pg.TextItem(
                 text=self.labels_org[channel], color=colour, anchor=(0, 0.5)
             )
-            label_item.setFont(self.font)
+            label_item.setFont(self.myfont)
             self.label_items.append(label_item)
-            self.gui.plot.addItem(label_item)
+            self.plot.addItem(label_item)
 
         if self.x_region_on:
-            self.gui.plot.addItem(self.x_region, ignoreBounds=True)
+            self.plot.addItem(self.x_region, ignoreBounds=True)
 
         if self.cursor_on:
-            self.gui.plot.addItem(self.cursor_x_line, ignoreBounds=True)
-            self.gui.plot.addItem(self.cursor_y_line, ignoreBounds=True)
-            self.gui.plot.addItem(self.cursor_label)
+            self.plot.addItem(self.cursor_x_line, ignoreBounds=True)
+            self.plot.addItem(self.cursor_y_line, ignoreBounds=True)
+            self.plot.addItem(self.cursor_label)
 
         self.set_axes(self.scale["type"])
 
@@ -999,7 +1000,7 @@ class DataViewer(QMainWindow):
                 channel.setData(time, data[idx, :])
 
         # labels
-        label_pos_y = self.gui.plot.getAxis("bottom").range[0]
+        label_pos_y = self.plot.getAxis("bottom").range[0]
         for idx, label in enumerate(self.label_items):
             label.setPos(label_pos_y, self.scale["yoffset"][idx])
 
@@ -1016,10 +1017,10 @@ class DataViewer(QMainWindow):
         val = self.events["val"]
         xmin, xmax = self.scale["xmin"], self.scale["xmax"]
 
-        for plt_item in self.gui.plot.plotItem.items:
+        for plt_item in self.plot.plotItem.items:
             try:
                 if plt_item.name() == "Event":
-                    self.gui.plot.removeItem(plt_item)
+                    self.plot.removeItem(plt_item)
             except AttributeError:
                 pass
 
@@ -1034,10 +1035,10 @@ class DataViewer(QMainWindow):
                 label=str(item[1]),
                 name="Event",
             )
-            event.label.setFont(self.font)
+            event.label.setFont(self.myfont)
             event.label.setPosition(0.95)
             event.setAngle(90)
-            self.gui.plot.addItem(event, ignoreBounds=False)
+            self.plot.addItem(event, ignoreBounds=False)
 
     def crop_x_dimension(self):
         """ Crop data along the x-dimnsion for plotting. """
@@ -1056,9 +1057,7 @@ class DataViewer(QMainWindow):
             n_chans = self.n_channels
         else:
             n_chans = len(self.channel_selection)
-        self.scale["yoffset"] = np.linspace(
-            self.scale["ymax"], self.scale["ymin"], n_chans
-        )
+        self.scale["yoffset"] = np.linspace(self.scale["ymax"], self.scale["ymin"], n_chans)
         self.scale["yoffset"] *= self.scale["yspacing_factor"] / 10
 
     @staticmethod
@@ -1073,26 +1072,26 @@ class DataViewer(QMainWindow):
         mouse click.
         """
 
-        font_size = self.font.pointSize()
+        font_size = self.myfont.pointSize()
         line_width = self.line_width
 
         for idx, item in enumerate(zip(self.channel_items, self.label_items)):
             if item[0] is channel:
                 if item[0].opts["pen"].width() == self.line_width:
                     item[0].opts["pen"].setWidth(line_width * 2)
-                    self.font.setPointSize(font_size * 2)
-                    item[1].setFont(self.font)
-                    self.font.setPointSize(font_size)
+                    self.myfont.setPointSize(font_size * 2)
+                    item[1].setFont(self.myfont)
+                    self.myfont.setPointSize(font_size)
                     self.channel_selected = self.labels_selected[idx]
                 else:
                     item[0].opts["pen"].setWidth(self.line_width)
-                    self.font.setPointSize(font_size)
-                    item[1].setFont(self.font)
+                    self.myfont.setPointSize(font_size)
+                    item[1].setFont(self.myfont)
                     self.channel_selected = None
             else:
                 item[0].opts["pen"].setWidth(self.line_width)
-                self.font.setPointSize(font_size)
-                item[1].setFont(self.font)
+                self.myfont.setPointSize(font_size)
+                item[1].setFont(self.myfont)
 
         if self.cursor_on:
             self.simulate_mouse_movment()
@@ -1128,9 +1127,13 @@ class DataViewer(QMainWindow):
 
         self.theme.rotate(1)
         pg.setConfigOptions(background=self.theme[0], foreground=self.theme[1])
-        self.gui.layout.removeWidget(self.gui.plot)
-        self.gui.plot = pg.PlotWidget(enableMenu=False)
-        self.gui.layout.insertWidget(0, self.gui.plot)
+        self.gui.layout.removeWidget(self.plot)
+
+        self.cursor_x_line = pg.InfiniteLine(angle=90, movable=False, name="x_cursor")
+        self.cursor_y_line = pg.InfiniteLine(angle=0, movable=False, name="y_cursor")
+        self.cursor_label = pg.TextItem(anchor=(0.5, 1))
+        self.plot = pg.PlotWidget(enableMenu=False)
+        self.gui.layout.insertWidget(0, self.plot)
         if self.fname is None:
             self.set_plot_blank()
         else:
@@ -1146,7 +1149,7 @@ class DataViewer(QMainWindow):
         )
 
         if ok and font_size:
-            self.font.setPointSize(int(font_size))
+            self.myfont.setPointSize(int(font_size))
         if self.fname is not None:
             self.set_plot()
             self.update_plot()
@@ -1179,7 +1182,7 @@ def run(fname=None):
     if fname is None and len(sys.argv) > 1:
         fname = sys.argv[1]
 
-    app = QtGui.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     if fname is not None:
         ex = DataViewer(fname)
     else:
