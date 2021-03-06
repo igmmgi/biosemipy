@@ -660,10 +660,10 @@ class DataViewer(QMainWindow):
     def on_y_spacing_factor_slider(self):
         """ Set y-scale spacing. """
 
-        self.scale["yspacing_factor"] = self.gui.y_spacing_factor_slider.value()
+        self.scale["yspacing_factor"] = int(self.gui.y_spacing_factor_slider.value())
         yrange = np.ptp(self.scale["yoffset"])
-        self.gui.y_spacing_offset_slider.setMinimum(-yrange / 2)
-        self.gui.y_spacing_offset_slider.setMaximum(yrange / 2)
+        self.gui.y_spacing_offset_slider.setMinimum(int(-yrange / 2))
+        self.gui.y_spacing_offset_slider.setMaximum(int(yrange / 2))
 
         self.set_plot()
         self.update_plot()
@@ -671,7 +671,7 @@ class DataViewer(QMainWindow):
     def on_y_spacing_offset_slider(self):
         """ Set y-scale offset. """
 
-        self.scale["yspacing_offset"] = self.gui.y_spacing_offset_slider.value()
+        self.scale["yspacing_offset"] = int(self.gui.y_spacing_offset_slider.value())
         self.gui.y_spacing_offset_slider.setValue(self.scale["yspacing_offset"])
         self.set_plot()
         self.update_plot()
@@ -681,7 +681,7 @@ class DataViewer(QMainWindow):
 
         self.scale["yspacing_factor"] += val
         self.gui.y_spacing_factor_slider.blockSignals(True)
-        self.gui.y_spacing_factor_slider.setValue(self.scale["yspacing_factor"])
+        self.gui.y_spacing_factor_slider.setValue(int(self.scale["yspacing_factor"]))
         self.gui.y_spacing_factor_slider.blockSignals(False)
         self.set_plot()
         self.update_plot()
