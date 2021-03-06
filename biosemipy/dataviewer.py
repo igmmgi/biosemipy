@@ -384,8 +384,8 @@ class DataViewer(QMainWindow):
         line_size_action = QAction("&Line Width", self)
         line_size_action.triggered.connect(self.select_line_width)
 
-        topoplot_action = QAction("&Topoplot", self)
-        topoplot_action.triggered.connect(self.plot_topography)
+        # topoplot_action = QAction("&Topoplot", self)
+        # topoplot_action.triggered.connect(self.plot_topography)
 
         file_menu.addAction(merge_file_action)
         file_menu.addAction(write_file_action)
@@ -420,11 +420,11 @@ class DataViewer(QMainWindow):
         visuals_menu.addAction(font_size_action)
         visuals_menu.addAction(line_size_action)
 
-        plots_menu = menu_bar.addMenu("&Plots (other)")
-        plots_menu.addAction(topoplot_action)
+        # plots_menu = menu_bar.addMenu("&Plots (other)")
+        # plots_menu.addAction(topoplot_action)
 
-    def plot_topography(self):
-        pass  # TO DO
+    # def plot_topography(self):
+    #     pass  # TO DO
 
     def on_high_pass_filter_action(self):
         """ Apply high-pass fir filter using MNE defaults """
