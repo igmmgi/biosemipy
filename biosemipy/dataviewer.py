@@ -445,7 +445,7 @@ class DataViewer(QMainWindow):
         if selection.exec_():
             freq = selection.get_selection()
             b, a = signal.butter(6, (float(freq) / (self.bdf.freq / 2)), "low")
-            self.data = signal.filt(b, a, self.data)
+            self.data = signal.filtfilt(b, a, self.data)
             self.update_plot()
 
     def on_decimate_file_clicked(self):
