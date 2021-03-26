@@ -304,6 +304,7 @@ class Topo:
             self.data[2],
             levels=z_scale,
             cmap="jet",
+            extend='both',
             zorder=1,
         )
         for fill in self.fills.collections:
@@ -318,7 +319,7 @@ class Topo:
     def show(self):
         plt.ion()
         plt.pause(0.001)
-        plt.show()
+        plt.draw()
 
 
 def run_examples():

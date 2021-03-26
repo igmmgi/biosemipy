@@ -62,7 +62,7 @@ class DataViewer(QMainWindow):
         self.data = None
         self.time = None
         self.layout_file = layout_file
-        self.topo = Topo(layout_file="biosemi72.csv")
+        self.topo = None
         self.n_channels = None
         self.labels_org = None
         self.labels_selected = None
@@ -90,6 +90,8 @@ class DataViewer(QMainWindow):
         # x-region
         self.x_region = pg.LinearRegionItem()
         self.x_region_on = False
+        self.x_region_idx = None
+        self.x_region_data = None
 
         # plot
         self.plot = pg.PlotWidget(enableMenu=False)
@@ -118,7 +120,6 @@ class DataViewer(QMainWindow):
         else:
             self._set_menubar(file_loaded=False)
             self._set_plot_blank()
-
 
     def _set_slider_values(self):
         """ Set appripriate min/max values for x/y-scale sliders. """
@@ -286,6 +287,9 @@ class DataViewer(QMainWindow):
             self.gui.toggle_cursor.clicked.connect(self._on_toggle_cursor_clicked)
             self.gui.reset.clicked.connect(self._on_reset_clicked)
 
+            # x region
+            self.x_region.sigRegionChangeFinished.connect(self._set_x_region_data)
+
         else:
 
             # y-scale
@@ -370,7 +374,9 @@ class DataViewer(QMainWindow):
         channel_delete_action.triggered.connect(self._on_channel_delete_action)
 
         channel_rereference_action = QAction("&Re-reference", self)
-        channel_rereference_action.triggered.connect(self._on_channel_rereference_action)
+        channel_rereference_action.triggered.connect(
+            self._on_channel_rereference_action
+        )
 
         theme_action = QAction("&Invert Theme", self)
         theme_action.triggered.connect(self._invert_theme)
@@ -384,8 +390,8 @@ class DataViewer(QMainWindow):
         line_size_action = QAction("&Line Width", self)
         line_size_action.triggered.connect(self._select_line_width)
 
-        # topoplot_action = QAction("&Topoplot", self)
-        # topoplot_action.triggered.connect(self.plot_topography)
+        topoplot_action = QAction("&Topoplot", self)
+        topoplot_action.triggered.connect(self.plot_topography)
 
         file_menu.addAction(merge_file_action)
         file_menu.addAction(write_file_action)
@@ -420,11 +426,20 @@ class DataViewer(QMainWindow):
         visuals_menu.addAction(font_size_action)
         visuals_menu.addAction(line_size_action)
 
-        # plots_menu = menu_bar.addMenu("&Plots (other)")
-        # plots_menu.addAction(topoplot_action)
+        plots_menu = menu_bar.addMenu("&Plots (other)")
+        plots_menu.addAction(topoplot_action)
 
-    # def plot_topography(self):
-    #     pass  # TO DO
+    def plot_topography(self):
+        """ Plot topography of highlighted x-region """
+
+        if self.x_region_data is None:
+            print("Data selection required!")
+        else:
+            self.topo = Topo(layout_file="biosemi72.csv")  # TO DO: layout file option
+            min_y = self.x_region_data.mean(1).min(0)
+            max_y = self.x_region_data.mean(1).max(0)
+            self.topo.plot(data=self.x_region_data.mean(1), z_scale=[min_y, max_y, 20])
+            self.topo.show()
 
     def _on_high_pass_filter_action(self):
         """ Apply high-pass fir filter using MNE defaults """
@@ -867,6 +882,11 @@ class DataViewer(QMainWindow):
                     + self.time[self.scale["x_scroll_speed"]],
                 ]
             )
+            region_edge = self.x_region.getRegion()
+            self.x_region_idx = time_to_idx(region_edge[0], region_edge[1], self.time)
+            self.x_region_data = self.data[
+                :, self.x_region_idx[0] : self.x_region_idx[1]
+            ]
 
     def _on_toggle_events_clicked(self):
         """ Toggle on/off show/hide events in main plot window. """
@@ -892,10 +912,23 @@ class DataViewer(QMainWindow):
         self.x_region_on = not self.x_region_on
         if self.x_region_on:
             self.gui.x_region.setText("X Region Selection (off)")
+            self._set_x_region_data()
         else:
             self.gui.x_region.setText("X Region Selection (on)")
+            self._reset_x_region_data()
         self._set_plot()
         self._update_plot()
+
+    def _set_x_region_data(self):
+
+        region_edge = self.x_region.getRegion()
+        self.x_region_idx = time_to_idx(region_edge[0], region_edge[1], self.time)
+        self.x_region_data = self.data[:, self.x_region_idx[0] : self.x_region_idx[1]]
+
+    def _reset_x_region_data(self):
+
+        self.x_region_idx = None
+        self.x_region_data = None
 
     def _on_reset_clicked(self):
         """ Reset plot. """
@@ -1057,7 +1090,9 @@ class DataViewer(QMainWindow):
             n_chans = self.n_channels
         else:
             n_chans = len(self.channel_selection)
-        self.scale["yoffset"] = np.linspace(self.scale["ymax"], self.scale["ymin"], n_chans)
+        self.scale["yoffset"] = np.linspace(
+            self.scale["ymax"], self.scale["ymin"], n_chans
+        )
         self.scale["yoffset"] *= self.scale["yspacing_factor"] / 10
 
     @staticmethod
