@@ -34,7 +34,7 @@ from biosemipy.gui.decimate import Decimate
 from biosemipy.gui.user_input import UserInput
 
 
-pg.setConfigOptions(background="k", foreground="w", useOpenGL=True)
+pg.setConfigOptions(background=(50, 50, 50), foreground=(200, 200, 200), useOpenGL=True)
 
 
 class DataViewer(QMainWindow):
@@ -103,7 +103,7 @@ class DataViewer(QMainWindow):
 
         # visuals
         self.line_width = 1
-        self.theme = deque(["k", "w"])
+        self.theme = deque([(50, 50, 50), (200, 200, 200)])
         self.colourmap = "rainbow"
         self.colours = cm.get_cmap(self.colourmap)
         self.myfont = QtGui.QFont("Monospace", 8)
@@ -1078,18 +1078,18 @@ class DataViewer(QMainWindow):
         for idx, item in enumerate(zip(self.channel_items, self.label_items)):
             if item[0] is channel:
                 if item[0].opts["pen"].width() == self.line_width:
-                    item[0].opts["pen"].setWidth(line_width * 2)
+                    item[0].opts["pen"].setWidth(int(line_width * 2))
                     self.myfont.setPointSize(font_size * 2)
                     item[1].setFont(self.myfont)
                     self.myfont.setPointSize(font_size)
                     self.channel_selected = self.labels_selected[idx]
                 else:
-                    item[0].opts["pen"].setWidth(self.line_width)
+                    item[0].opts["pen"].setWidth(int(self.line_width))
                     self.myfont.setPointSize(font_size)
                     item[1].setFont(self.myfont)
                     self.channel_selected = None
             else:
-                item[0].opts["pen"].setWidth(self.line_width)
+                item[0].opts["pen"].setWidth(int(self.line_width))
                 self.myfont.setPointSize(font_size)
                 item[1].setFont(self.myfont)
 
