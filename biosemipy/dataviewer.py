@@ -1,6 +1,7 @@
 """
 DataViewer: PyQt5-based gui for viewing *.bdf files
 """
+import argparse
 import os
 import sys
 from collections import deque
@@ -344,6 +345,9 @@ class DataViewer(QMainWindow):
         if not file_loaded:
             return
 
+        read_layout_file_action = QAction("&Read Layout File", self)
+        read_layout_file_action.triggered.connect(self.select_layout_file)
+
         write_file_action = QAction("&Write BDF File", self)
         write_file_action.triggered.connect(self._on_write_file_clicked)
 
@@ -393,6 +397,7 @@ class DataViewer(QMainWindow):
         topoplot_action = QAction("&Topoplot", self)
         topoplot_action.triggered.connect(self.plot_topography)
 
+        file_menu.addAction(read_layout_file_action)
         file_menu.addAction(merge_file_action)
         file_menu.addAction(write_file_action)
         file_menu.addAction(crop_file_action)
@@ -435,7 +440,9 @@ class DataViewer(QMainWindow):
         if self.x_region_data is None:
             print("Data selection required!")
         else:
-            self.topo = Topo(layout_file="biosemi72.csv")  # TO DO: layout file option
+            if self.layout_file is None:
+                self.select_layout_file()
+            self.topo = Topo(layout_file=self.layout_file)
             min_y = self.x_region_data.mean(1).min(0)
             max_y = self.x_region_data.mean(1).max(0)
             self.topo.plot(data=self.x_region_data.mean(1), z_scale=[min_y, max_y, 20])
@@ -730,6 +737,15 @@ class DataViewer(QMainWindow):
             self._set_selection_labels()
             self._set_plot()
             self._update_plot()
+
+    def select_layout_file(self):
+        """ *.csv file selection. """
+        fname = QFileDialog.getOpenFileName(
+            self, "Select File", "", "Layout Files (*.csv)"
+        )[0]
+
+        if fname:
+            self.layout_file = fname
 
     def _on_clear_file_clicked(self):
         """ Clear current plot. """
@@ -1213,15 +1229,17 @@ def time_to_idx(t1, t2, time_array):
 
 def run(fname=None):
 
-    # check if file name entered as command line argument
-    if fname is None and len(sys.argv) > 1:
-        fname = sys.argv[1]
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--fname", nargs="?", const=None, type=str)
+    parser.add_argument("--channels", nargs="+", const=None, type=int)
+    parser.add_argument("--layout_file", nargs="?", const=None, type=str)
+    args = parser.parse_args()
+
+    if fname is None:
+        fname = args.fname
 
     app = QApplication(sys.argv)
-    if fname is not None:
-        ex = DataViewer(fname)
-    else:
-        ex = DataViewer()
+    ex = DataViewer(fname=fname, channels=args.channels, layout_file=args.layout_file)
     ex.show()
     sys.exit(app.exec_())
 
