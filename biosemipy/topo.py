@@ -304,7 +304,7 @@ class Topo:
             self.data[2],
             levels=z_scale,
             cmap="jet",
-            extend='both',
+            extend="both",
             zorder=1,
         )
         for fill in self.fills.collections:

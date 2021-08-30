@@ -15,7 +15,9 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(200, 720)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
@@ -32,10 +34,14 @@ class Ui_MainWindow(object):
         self.layout.addWidget(self.y_spacing_offset_slider)
         self.control_grid = QtWidgets.QGridLayout()
         self.control_grid.setObjectName("control_grid")
-        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        spacerItem = QtWidgets.QSpacerItem(
+            20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding
+        )
         self.control_grid.addItem(spacerItem, 27, 0, 1, 1)
         self.x_scroll = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.x_scroll.sizePolicy().hasHeightForWidth())
@@ -43,15 +49,21 @@ class Ui_MainWindow(object):
         self.x_scroll.setObjectName("x_scroll")
         self.control_grid.addWidget(self.x_scroll, 13, 0, 1, 2)
         self.x_scroll_speed_inc = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.x_scroll_speed_inc.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.x_scroll_speed_inc.sizePolicy().hasHeightForWidth()
+        )
         self.x_scroll_speed_inc.setSizePolicy(sizePolicy)
         self.x_scroll_speed_inc.setObjectName("x_scroll_speed_inc")
         self.control_grid.addWidget(self.x_scroll_speed_inc, 15, 1, 1, 1)
         self.reset = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.reset.sizePolicy().hasHeightForWidth())
@@ -59,10 +71,14 @@ class Ui_MainWindow(object):
         self.reset.setObjectName("reset")
         self.control_grid.addWidget(self.reset, 25, 0, 1, 2)
         self.x_scroll_speed_dec = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.x_scroll_speed_dec.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.x_scroll_speed_dec.sizePolicy().hasHeightForWidth()
+        )
         self.x_scroll_speed_dec.setSizePolicy(sizePolicy)
         self.x_scroll_speed_dec.setObjectName("x_scroll_speed_dec")
         self.control_grid.addWidget(self.x_scroll_speed_dec, 15, 0, 1, 1)
@@ -70,16 +86,22 @@ class Ui_MainWindow(object):
         self.x_region.setObjectName("x_region")
         self.control_grid.addWidget(self.x_region, 19, 0, 1, 2)
         self.control_grid_label = QtWidgets.QLabel(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.control_grid_label.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.control_grid_label.sizePolicy().hasHeightForWidth()
+        )
         self.control_grid_label.setSizePolicy(sizePolicy)
         self.control_grid_label.setAlignment(QtCore.Qt.AlignCenter)
         self.control_grid_label.setObjectName("control_grid_label")
         self.control_grid.addWidget(self.control_grid_label, 0, 0, 1, 2)
         self.y_scale_inc = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.y_scale_inc.sizePolicy().hasHeightForWidth())
@@ -90,7 +112,9 @@ class Ui_MainWindow(object):
         self.y_spacing_inc.setObjectName("y_spacing_inc")
         self.control_grid.addWidget(self.y_spacing_inc, 5, 1, 1, 1)
         self.x_scale_inc = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.x_scale_inc.sizePolicy().hasHeightForWidth())
@@ -98,7 +122,9 @@ class Ui_MainWindow(object):
         self.x_scale_inc.setObjectName("x_scale_inc")
         self.control_grid.addWidget(self.x_scale_inc, 10, 1, 1, 1)
         self.y_scale_type = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.y_scale_type.sizePolicy().hasHeightForWidth())
@@ -110,19 +136,27 @@ class Ui_MainWindow(object):
         self.y_spacing_factor_slider.setObjectName("y_spacing_factor_slider")
         self.control_grid.addWidget(self.y_spacing_factor_slider, 7, 0, 1, 2)
         self.x_scroll_pos_slider = QtWidgets.QScrollBar(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.x_scroll_pos_slider.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.x_scroll_pos_slider.sizePolicy().hasHeightForWidth()
+        )
         self.x_scroll_pos_slider.setSizePolicy(sizePolicy)
         self.x_scroll_pos_slider.setOrientation(QtCore.Qt.Horizontal)
         self.x_scroll_pos_slider.setObjectName("x_scroll_pos_slider")
         self.control_grid.addWidget(self.x_scroll_pos_slider, 14, 0, 1, 2)
         self.x_scale_slider = QtWidgets.QScrollBar(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.x_scale_slider.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.x_scale_slider.sizePolicy().hasHeightForWidth()
+        )
         self.x_scale_slider.setSizePolicy(sizePolicy)
         self.x_scale_slider.setOrientation(QtCore.Qt.Horizontal)
         self.x_scale_slider.setObjectName("x_scale_slider")
@@ -134,16 +168,22 @@ class Ui_MainWindow(object):
         self.toggle_events.setObjectName("toggle_events")
         self.control_grid.addWidget(self.toggle_events, 21, 0, 1, 2)
         self.y_scale_slider = QtWidgets.QScrollBar(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.y_scale_slider.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.y_scale_slider.sizePolicy().hasHeightForWidth()
+        )
         self.y_scale_slider.setSizePolicy(sizePolicy)
         self.y_scale_slider.setOrientation(QtCore.Qt.Horizontal)
         self.y_scale_slider.setObjectName("y_scale_slider")
         self.control_grid.addWidget(self.y_scale_slider, 4, 0, 1, 2)
         self.x_scale_dec = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.x_scale_dec.sizePolicy().hasHeightForWidth())
@@ -151,16 +191,22 @@ class Ui_MainWindow(object):
         self.x_scale_dec.setObjectName("x_scale_dec")
         self.control_grid.addWidget(self.x_scale_dec, 10, 0, 1, 1)
         self.x_scroll_speed_slider = QtWidgets.QScrollBar(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.x_scroll_speed_slider.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.x_scroll_speed_slider.sizePolicy().hasHeightForWidth()
+        )
         self.x_scroll_speed_slider.setSizePolicy(sizePolicy)
         self.x_scroll_speed_slider.setOrientation(QtCore.Qt.Horizontal)
         self.x_scroll_speed_slider.setObjectName("x_scroll_speed_slider")
         self.control_grid.addWidget(self.x_scroll_speed_slider, 18, 0, 1, 2)
         self.y_scale_dec = QtWidgets.QPushButton(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.y_scale_dec.sizePolicy().hasHeightForWidth())
@@ -173,21 +219,33 @@ class Ui_MainWindow(object):
         self.y_demean = QtWidgets.QPushButton(self.centralwidget)
         self.y_demean.setObjectName("y_demean")
         self.control_grid.addWidget(self.y_demean, 8, 0, 1, 2)
-        spacerItem1 = QtWidgets.QSpacerItem(20, 30, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
+        spacerItem1 = QtWidgets.QSpacerItem(
+            20, 30, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred
+        )
         self.control_grid.addItem(spacerItem1, 24, 0, 1, 1)
-        spacerItem2 = QtWidgets.QSpacerItem(20, 30, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
+        spacerItem2 = QtWidgets.QSpacerItem(
+            20, 30, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred
+        )
         self.control_grid.addItem(spacerItem2, 22, 0, 1, 1)
-        spacerItem3 = QtWidgets.QSpacerItem(20, 30, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
+        spacerItem3 = QtWidgets.QSpacerItem(
+            20, 30, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred
+        )
         self.control_grid.addItem(spacerItem3, 20, 0, 1, 1)
-        spacerItem4 = QtWidgets.QSpacerItem(20, 30, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
+        spacerItem4 = QtWidgets.QSpacerItem(
+            20, 30, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred
+        )
         self.control_grid.addItem(spacerItem4, 2, 0, 1, 1)
-        spacerItem5 = QtWidgets.QSpacerItem(20, 30, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
+        spacerItem5 = QtWidgets.QSpacerItem(
+            20, 30, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred
+        )
         self.control_grid.addItem(spacerItem5, 9, 0, 1, 1)
         self.layout.addLayout(self.control_grid)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.label = QtWidgets.QLabel(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label.sizePolicy().hasHeightForWidth())
@@ -198,10 +256,14 @@ class Ui_MainWindow(object):
         self.label.setObjectName("label")
         self.verticalLayout_2.addWidget(self.label)
         self.channel_selection = QtWidgets.QListWidget(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy = QtWidgets.QSizePolicy(
+            QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Expanding
+        )
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.channel_selection.sizePolicy().hasHeightForWidth())
+        sizePolicy.setHeightForWidth(
+            self.channel_selection.sizePolicy().hasHeightForWidth()
+        )
         self.channel_selection.setSizePolicy(sizePolicy)
         self.channel_selection.setMaximumSize(QtCore.QSize(160, 16777215))
         self.channel_selection.setSizeIncrement(QtCore.QSize(0, 0))
@@ -247,6 +309,7 @@ class Ui_MainWindow(object):
 
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()

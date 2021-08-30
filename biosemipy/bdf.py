@@ -114,7 +114,6 @@ class BDF:
             self.time = np.arange(0, np.size(self.data, 1)) / self.freq
             self._update_header(chans)
 
-
     def write(self, fname=None):
         """
         Write bdf file.
@@ -160,7 +159,6 @@ class BDF:
 
         dat = np.concatenate([hdr, bdf])
         dat.astype("uint8").tofile(fname)
-
 
     def merge(self, fname, *args):
         """
