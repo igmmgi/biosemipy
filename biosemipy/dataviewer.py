@@ -35,7 +35,7 @@ from biosemipy.gui.decimate import Decimate
 from biosemipy.gui.user_input import UserInput
 
 
-pg.setConfigOptions(background=(50, 50, 50), foreground=(200, 200, 200), useOpenGL=True)
+pg.setConfigOptions(background=(50, 50, 50), foreground=(250, 250, 250), useOpenGL=True)
 
 
 class DataViewer(QMainWindow):
@@ -106,7 +106,7 @@ class DataViewer(QMainWindow):
 
         # visuals
         self.line_width = 1
-        self.theme = deque([(50, 50, 50), (200, 200, 200)])
+        self.theme = deque([(50, 50, 50), (250, 250, 250)])
         self.colourmap = "rainbow"
         self.colours = cm.get_cmap(self.colourmap)
         self.myfont = QtGui.QFont("Monospace", 8)
