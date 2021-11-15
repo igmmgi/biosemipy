@@ -35,7 +35,8 @@ from biosemipy.gui.decimate import Decimate
 from biosemipy.gui.user_input import UserInput
 
 
-pg.setConfigOptions(background=(50, 50, 50), foreground=(250, 250, 250), useOpenGL=True)
+pg.setConfigOptions(background=(50, 50, 50), foreground=(250, 250, 250), useOpenGL=True,
+        enableExperimental=True)
 
 
 class DataViewer(QMainWindow):
@@ -226,7 +227,7 @@ class DataViewer(QMainWindow):
                 "yspacing_offset": 0,
                 "yspacing_factor": 10,
                 "yoffset": np.array([]),
-                "y_demean": True,
+                "y_demean": False,
                 "xmin": 0,
                 "xmax": 500,
                 "xrange": 500,

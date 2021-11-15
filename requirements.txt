@@ -2,6 +2,6 @@ PyQt5
 matplotlib
 numba
 numpy
-pyqtgraph
+pyqtgraph==0.11.1
 scipy
 pandas
