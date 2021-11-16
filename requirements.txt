@@ -2,6 +2,7 @@ PyQt5
 matplotlib
 numba
 numpy
-pyqtgraph==0.11.1
+pyqtgraph
+pyopengl
 scipy
 pandas

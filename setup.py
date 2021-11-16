@@ -13,6 +13,7 @@ setup(
         "numpy",
         "pandas",
         "pyqtgraph",
+        "pyopengl",
         "PyQt5",
         "scipy",
     ],
