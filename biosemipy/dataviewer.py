@@ -6,6 +6,7 @@ import os
 import sys
 from collections import deque
 from functools import partial
+from tkinter import W
 
 import numpy as np
 import pyqtgraph as pg
@@ -15,11 +16,13 @@ from PyQt5.QtWidgets import (
     QApplication,
     QAbstractItemView,
     QAction,
+    QCheckBox,
     QFileDialog,
     QInputDialog,
     QMainWindow,
     QMessageBox,
 )
+import matplotlib.pyplot as plt
 from matplotlib import cm
 from scipy import signal
 
@@ -113,6 +116,9 @@ class DataViewer(QMainWindow):
         self.myfont = QtGui.QFont("Monospace", 8)
         self.setWindowTitle("Data Viewer")
         self.setGeometry(0, 0, 1280, 720)
+
+        # Plots (other)
+        self.plot_topography_on = False
 
         if self.fname:
             self.read_bdf_file()
@@ -438,16 +444,28 @@ class DataViewer(QMainWindow):
     def plot_topography(self):
         """ Plot topography of highlighted x-region """
 
+        self.plot_topography_on = not self.plot_topography_on
+        if not self.plot_topography_on:
+            plt.close(self.topo.fig)
+            return
+
+        if self.layout_file is None:
+            self.select_layout_file()
+
+    def _plot_topography(self):
+        """ Plot topography of highlighted x-region """
+
         if self.x_region_data is None:
-            print("Data selection required!")
-        else:
-            if self.layout_file is None:
-                self.select_layout_file()
+            self.x_region_data = self.data
+
+        if not plt.get_fignums():
             self.topo = Topo(layout_file=self.layout_file)
-            min_y = self.x_region_data.mean(1).min(0)
-            max_y = self.x_region_data.mean(1).max(0)
-            self.topo.plot(data=self.x_region_data.mean(1), z_scale=[min_y, max_y, 20])
-            self.topo.show()
+
+        min_y = self.x_region_data.mean(1).min(0)
+        max_y = self.x_region_data.mean(1).max(0)
+        self.topo.plot(data=self.x_region_data.mean(1), z_scale=[min_y, max_y, 20])
+        self.topo.show()
+
 
     def _on_high_pass_filter_action(self):
         """ Apply high-pass fir filter using MNE defaults """
@@ -925,7 +943,6 @@ class DataViewer(QMainWindow):
 
     def _on_x_region_clicked(self):
         """ Toggle on/off x region selection. """
-
         self.x_region_on = not self.x_region_on
         if self.x_region_on:
             self.gui.x_region.setText("X Region Selection (off)")
@@ -937,7 +954,6 @@ class DataViewer(QMainWindow):
         self._update_plot()
 
     def _set_x_region_data(self):
-
         region_edge = self.x_region.getRegion()
         self.x_region_idx = time_to_idx(region_edge[0], region_edge[1], self.time)
         self.x_region_data = self.data[:, self.x_region_idx[0] : self.x_region_idx[1]]
@@ -1059,6 +1075,9 @@ class DataViewer(QMainWindow):
 
         if self.plot_events:
             self._plot_events()
+
+        if self.plot_topography_on:
+            self.plot_topography()
 
     def _plot_events(self):
         """ Show events as vertical line with corresponding event code. """

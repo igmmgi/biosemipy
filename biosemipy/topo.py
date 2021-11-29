@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle, Ellipse, Wedge
+import matplotlib.animation as animation
 from scipy.spatial import ConvexHull
 from scipy.interpolate import Rbf
 
@@ -319,7 +320,13 @@ class Topo:
     def show(self):
         plt.ion()
         plt.pause(0.001)
-        plt.draw()
+        plt.show()
+
+
+    def animate(self):
+        self.ani = animation.FuncAnimation(self.fig, self._animate_function, interval=50)
+        self.show()
+
 
 
 def run_examples():
