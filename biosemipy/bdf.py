@@ -42,18 +42,16 @@ class BDF:
             self.read(fname, hdr_only=hdr_only, chans=chans)
 
     def __str__(self):
-        """ Print out some useful information. """
+        """Print out some useful information."""
 
-        name = "Filename: " + str(self.fname)
-        n_chans = "Number of Channels: " + str(self.hdr["n_chans"])
-        labels = "Channel Labels: " + str(self.hdr["labels"])
-        freq = "Sampling Frequency: " + str(self.freq)
-        n_recs = "Number Records: " + str(self.hdr["n_recs"])
-        n_samps = "Number Samples: " + str((self.freq * self.hdr["n_recs"]))
+        name = f"Filename: {self.fname}"
+        n_chans = f"Number of Channels: {self.hdr['n_chans']}" 
+        labels = f"Channel Labels: {self.hdr['labels']}" 
+        freq = f"Sampling Frequency: {self.freq}"
+        n_recs = f"Number Records: {self.hdr['n_recs']}" 
+        n_samps = f"Number Samples: {self.freq * self.hdr['n_recs']}" 
 
-        return "{}\n{}\n{}\n{}\n{}\n{}".format(
-            name, n_chans, labels, freq, n_recs, n_samps
-        )
+        return f"{name}\n{n_chans}\n{labels}\n{freq}\n{n_recs}\n{n_samps}"
 
     def __repr__(self):
         return self.__str__()
@@ -122,7 +120,7 @@ class BDF:
 
         if not fname:
             fname = self.fname
-        print("Writing to file {}".format(fname))
+        print(f"Writing to file {fname}")
 
         hdr = [0xFF]
         [hdr.append(ord(i)) for i in self.hdr["id2"]]
@@ -191,7 +189,7 @@ class BDF:
         the bdf file can be defined using either a start and end trigger
         ("triggers") or a start and end record ("records"). With the option
         "triggers", specifying 0 as the first value will crop the file at the
-        beginning of the file, while specifying 0 as the second value cwill
+        beginning of the file, while specifying 0 as the second value will
         crop the file at the end of the file.
         :param crop_type: string
         :param val: list
@@ -306,7 +304,7 @@ class BDF:
         self._update_header(chans, update_labels=False)
 
     def rereference(self, chans):
-        """ Re-reference """
+        """Re-reference"""
 
         chans = self._channel_idx(chans)[:-1]
         self.data -= self.data[chans, :].mean(0)
@@ -326,13 +324,13 @@ class BDF:
             if isinstance(chan, str) and chan in self.hdr["labels"][:-1]:
                 chan_out.append(self.hdr["labels"].index(chan))
             elif isinstance(chan, str) and chan == self.hdr["labels"][-1]:
-                print("Channel:'{}' is trigger channel!".format(chan))
+                print(f"Channel:'{chan}' is trigger channel!")
             elif isinstance(chan, int) and 0 < chan < (self.hdr["n_chans"]):
                 chan_out.append(chan - 1)  # zero index
             elif isinstance(chan, int) and chan == (self.hdr["n_chans"]):
-                print("Channel:'{}' is trigger channel!".format(chan))
+                print(f"Channel:'{chan}' is trigger channel!")
             else:
-                raise Exception("Channel:'{}' not in bdf file!".format(chan))
+                raise Exception(f"Channel:'{chan}' not in bdf file!")
 
         chan_out.append(self.hdr["n_chans"] - 1)
 
@@ -404,14 +402,13 @@ class BDF:
         self.trig["val"] = self.trig["raw"][self.trig["idx"]]
         self.trig["count"] = self._trigger_count()
 
-        time = np.append(0, np.diff(self.trig["idx"])) / self.hdr["freq"][0]
+        self.trig["time"] = None
         if len(self.trig["idx"]) > 0:
+            time = np.append(0, np.diff(self.trig["idx"])) / self.hdr["freq"][0]
             self.trig["time"] = np.vstack([self.trig["val"], time])
-        else:
-            self.trig["time"] = None
 
     def _trigger_count(self):
-        """ Return unique trigger values and count. """
+        """Return unique trigger values and count."""
 
         values, count = np.unique(self.trig["val"], return_counts=True)
         return dict(zip(values, count))

@@ -11,7 +11,7 @@ from scipy.interpolate import Rbf
 
 
 class Topo:
-    """ EEG Topographic Plots """
+    """EEG Topographic Plots"""
 
     def __init__(
         self,
@@ -73,7 +73,7 @@ class Topo:
             self.plot_title(**self.title_kwargs)
 
     def generate_outline(self, linewidth=2):
-        """ Generate head, nose, and ear outlines for plot. """
+        """Generate head, nose, and ear outlines for plot."""
 
         head = Circle(
             xy=[0, 0],
@@ -118,7 +118,7 @@ class Topo:
         return {"head": head, "nose": nose, "l_ear": l_ear, "r_ear": r_ear}
 
     def read_layout(self, layout_name, fit_coords=True):
-        """ Read BioSemi position coordinate file. """
+        """Read BioSemi position coordinate file."""
 
         layout_name = os.path.join(os.path.dirname(__file__), "layouts", layout_name)
         self.layout = pd.read_csv(layout_name)
@@ -139,10 +139,10 @@ class Topo:
         self.layout["y"] = inc * np.sin(azi)
 
     def _fit_coords_to_head(self):
-        """ Fit coordinates inside head circumference. """
+        """Fit coordinates inside head circumference."""
 
         x, y = self.layout["x"], self.layout["y"]
-        while np.any(np.sqrt(x ** 2 + y ** 2) > 1):
+        while np.any(np.sqrt(x**2 + y**2) > 1):
             x *= 0.99
             y *= 0.99
 
@@ -150,7 +150,7 @@ class Topo:
         self.layout["y"] = y
 
     def interp_data(self, data, res=100):
-        """ Interperet data using scipy.interpolate.Rbf. """
+        """Interperet data using scipy.interpolate.Rbf."""
 
         interp = Rbf(self.layout["x"], self.layout["y"], data, function="cubic")
 
@@ -321,12 +321,6 @@ class Topo:
         plt.ion()
         plt.pause(0.001)
         plt.show()
-
-
-    def animate(self):
-        self.ani = animation.FuncAnimation(self.fig, self._animate_function, interval=50)
-        self.show()
-
 
 
 def run_examples():
