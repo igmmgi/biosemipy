@@ -104,7 +104,7 @@ class BDF:
             else:  # read all channels
                 chans = list(range(self.hdr["n_chans"]))
 
-            bdf_dat = np.fromfile(f, dtype=np.dtype("uint8"))
+            bdf_dat = np.fromfile(f, dtype="uint8")
 
             self._bdf2matrix(bdf_dat, chans)
             self.freq = self.hdr["freq"][0]
@@ -434,24 +434,31 @@ def _bdf2matrix(bdf_dat, chans, scale, n_chans, n_recs, n_samps):
 
     pos = 0
     for rec in range(n_recs):
+        offset = rec * n_samps
         idx = 0
         for chan in range(n_chans):
             if chans[chan]:
                 if chan < (n_chans - 1):
                     for samp in range(n_samps):
-                        val1 = np.int32(bdf_dat[pos]) << 8
-                        val2 = np.int32(bdf_dat[pos + 1]) << 16
-                        val3 = -(np.int32(-bdf_dat[pos + 2])) << 24
-                        val = ((val1 | val2 | val3) >> 8) * scale[chan]
-                        data[idx, rec * n_samps + samp] = np.float64(val)
+
+                        val1 = np.int32(bdf_dat[pos])  << 8
+                        val2 = np.int32(bdf_dat[pos + 1]) << 16 
+                        val3 = np.int32(bdf_dat[pos + 2]) << 24 
+                        val = ((val1 | val2 | val3) >> 8) 
+        
+                        if val >= 2**23:
+                            val -= 2**24
+
+                        data[idx, offset + samp] = np.float64(val * scale[chan])
+
                         pos += 3
                 else:  # last channel is always Status channel
                     for samp in range(n_samps):
                         val1 = np.int16(bdf_dat[pos])
                         val2 = np.int16(bdf_dat[pos + 1])
                         val = val1 | (val2 << 8)
-                        trig[rec * n_samps + samp] = val
-                        status[rec * n_samps + samp] = np.int16(bdf_dat[pos + 2])
+                        trig[offset + samp] = val
+                        status[offset + samp] = np.int16(bdf_dat[pos + 2])
                         pos += 3
                 idx += 1
             else:

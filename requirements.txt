@@ -2,7 +2,7 @@ PyQt5
 matplotlib
 numba
 numpy
-pyqtgraph
-pyopengl
-scipy
 pandas
+pyopengl
+pyqtgraph
+scipy

@@ -134,10 +134,10 @@ class DataViewer(QMainWindow):
     def _set_slider_values(self):
         """Set appripriate min/max values for x/y-scale sliders."""
 
-        self.gui.y_scale_slider.setMinimum(-5000)
-        self.gui.y_scale_slider.setMaximum(-5)
-        self.gui.y_scale_slider.setValue(-1000)
-        self.gui.y_scale_slider.setSliderPosition(-1000)
+        self.gui.y_scale_slider.setMinimum(-500)
+        self.gui.y_scale_slider.setMaximum(500)
+        self.gui.y_scale_slider.setValue(0)
+        self.gui.y_scale_slider.setSliderPosition(0)
         self.gui.y_scale_slider.setSingleStep(5)
 
         self.gui.y_spacing_factor_slider.setMinimum(0)
