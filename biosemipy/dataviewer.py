@@ -134,23 +134,23 @@ class DataViewer(QMainWindow):
     def _set_slider_values(self):
         """Set appripriate min/max values for x/y-scale sliders."""
 
-        self.gui.y_scale_slider.setMinimum(-500)
+        self.gui.y_scale_slider.setMinimum(10)
         self.gui.y_scale_slider.setMaximum(500)
-        self.gui.y_scale_slider.setValue(0)
-        self.gui.y_scale_slider.setSliderPosition(0)
-        self.gui.y_scale_slider.setSingleStep(5)
+        self.gui.y_scale_slider.setValue(10)
+        self.gui.y_scale_slider.setSliderPosition(10)
+        self.gui.y_scale_slider.setSingleStep(10)
 
         self.gui.y_spacing_factor_slider.setMinimum(0)
-        self.gui.y_spacing_factor_slider.setMaximum(500)
-        self.gui.y_spacing_factor_slider.setValue(10)
-        self.gui.y_spacing_factor_slider.setSliderPosition(10)
-        self.gui.y_spacing_factor_slider.setSingleStep(1)
+        self.gui.y_spacing_factor_slider.setMaximum(100)
+        self.gui.y_spacing_factor_slider.setValue(5)
+        self.gui.y_spacing_factor_slider.setSliderPosition(5)
+        self.gui.y_spacing_factor_slider.setSingleStep(5)
 
         self.gui.x_scale_slider.setMinimum(0)
         self.gui.x_scale_slider.setMaximum(10000)
         self.gui.x_scale_slider.setValue(0)
         self.gui.x_scale_slider.setSliderPosition(0)
-        self.gui.x_scale_slider.setSingleStep(10)
+        self.gui.x_scale_slider.setSingleStep(100)
 
         self.gui.x_scroll_pos_slider.setMinimum(0)
         self.gui.x_scroll_pos_slider.setMaximum(
@@ -251,8 +251,8 @@ class DataViewer(QMainWindow):
 
             # y-scale
             self.gui.y_scale_type.clicked.connect(self._on_y_scale_type_clicked)
-            self.gui.y_scale_dec.clicked.connect(partial(self._on_y_scale_clicked, 50))
-            self.gui.y_scale_inc.clicked.connect(partial(self._on_y_scale_clicked, -50))
+            self.gui.y_scale_dec.clicked.connect(partial(self._on_y_scale_clicked, 10))
+            self.gui.y_scale_inc.clicked.connect(partial(self._on_y_scale_clicked, -10))
             self.gui.y_scale_slider.valueChanged.connect(self._on_y_scale_slider)
 
             # self.gui.y_spacing_factor_slider
@@ -802,13 +802,9 @@ class DataViewer(QMainWindow):
     def _on_y_scale_clicked(self, val):
         """Change y-scale."""
 
-        if 0 >= self.scale["ymin"] >= -5000:
-            self.scale["ymin"] -= val
-            self.scale["ymax"] += val
+        self.scale["ymin"] -= val
+        self.scale["ymax"] += val
         self.scale["yrange"] = self.scale["ymax"] - self.scale["ymin"]
-        self.gui.y_scale_slider.blockSignals(True)
-        self.gui.y_scale_slider.setValue(self.scale["ymin"])
-        self.gui.y_scale_slider.blockSignals(False)
         self._update_plot()
 
     def _set_axes(self, plot_type):
@@ -831,11 +827,10 @@ class DataViewer(QMainWindow):
     def _on_y_scale_slider(self):
         """Change y-scale."""
 
-        self.scale["ymin"] = self.gui.y_scale_slider.value()
-        self.scale["ymax"] = -self.gui.y_scale_slider.value()
+        self.scale["ymin"] = -self.gui.y_scale_slider.value()
+        self.scale["ymax"] = self.gui.y_scale_slider.value()
         self.scale["yrange"] = self.scale["ymax"] - self.scale["ymin"]
         self._calculate_y_offset()
-        self.gui.y_scale_slider.setValue(self.scale["ymin"])
         self._update_plot()
 
     def _on_x_scale_clicked(self, val):
@@ -1138,7 +1133,6 @@ class DataViewer(QMainWindow):
     @staticmethod
     def demean_data(data):
         """Remove data mean."""
-
         return data - np.mean(data, 1, keepdims=True)
 
     def _on_channel_selected(self, channel):
