@@ -21,7 +21,7 @@ from PyQt5.QtWidgets import (
     QMessageBox,
 )
 import matplotlib.pyplot as plt
-from matplotlib import cm
+from matplotlib import colormaps
 from scipy import signal
 
 from biosemipy.bdf import BDF
@@ -60,7 +60,6 @@ class DataViewer(QMainWindow):
     """
 
     def __init__(self, fname=None, channels=None, layout_file=None):
-
         super(DataViewer, self).__init__()
 
         # required data fields
@@ -114,7 +113,7 @@ class DataViewer(QMainWindow):
         self.line_width = 1
         self.theme = deque([(50, 50, 50), (250, 250, 250)])
         self.colourmap = "rainbow"
-        self.colours = cm.get_cmap(self.colourmap)
+        self.colours = colormaps.get_cmap(self.colourmap)
         self.myfont = QtGui.QFont("Monospace", 8)
         self.setWindowTitle("Data Viewer")
         self.setGeometry(0, 0, 1280, 720)
@@ -248,7 +247,6 @@ class DataViewer(QMainWindow):
         """Connect qt gui buttons/sliders to appropriate functions."""
 
         if connect:
-
             # y-scale
             self.gui.y_scale_type.clicked.connect(self._on_y_scale_type_clicked)
             self.gui.y_scale_dec.clicked.connect(partial(self._on_y_scale_clicked, 10))
@@ -301,7 +299,6 @@ class DataViewer(QMainWindow):
             self.x_region.sigRegionChangeFinished.connect(self._set_x_region_data)
 
         else:
-
             # y-scale
             self.gui.y_scale_type.clicked.disconnect()
             self.gui.y_scale_dec.clicked.disconnect()
@@ -677,7 +674,6 @@ class DataViewer(QMainWindow):
             point = self.plot.plotItem.vb.mapSceneToView(evt[0])
             txt = ""
             if self.channel_selected is not None:
-
                 x = point.x()
                 y = point.y()
                 try:
@@ -751,7 +747,6 @@ class DataViewer(QMainWindow):
         )[0]
 
         if fname:
-
             self.fname = fname  # need full path for read_bdf_file()
             self.read_bdf_file()
             self.fname = os.path.split(self.fname)[1]  # only filename
@@ -957,7 +952,6 @@ class DataViewer(QMainWindow):
         self.x_region_data = self.data[:, self.x_region_idx[0] : self.x_region_idx[1]]
 
     def _reset_x_region_data(self):
-
         self.x_region_idx = None
         self.x_region_data = None
 
@@ -1016,7 +1010,6 @@ class DataViewer(QMainWindow):
 
         colour_idx = np.linspace(0, self.colours.N, self.n_channels)
         for channel in self.channel_selection:
-
             colour = self.colours(int(colour_idx[channel]), bytes=True)
 
             channel_item = pg.PlotCurveItem(
@@ -1178,12 +1171,12 @@ class DataViewer(QMainWindow):
         """Select colourmap used for the plot lines."""
 
         item, ok = QInputDialog.getItem(
-            self, "Select Colourmap", "Colourmaps", cm.cmaps_listed.keys()
+            self, "Select Colourmap", "Colourmaps", plt.colormaps()
         )
 
         if ok and item:
             self.colourmap = item
-            self.colours = cm.get_cmap(self.colourmap)
+            self.colours = colormaps.get_cmap(self.colourmap)
         if self.fname is not None:
             self._set_plot()
             self._update_plot()
@@ -1246,7 +1239,6 @@ def time_to_idx(t1, t2, time_array):
 
 
 def run(fname=None):
-
     parser = argparse.ArgumentParser()
     parser.add_argument("--fname", nargs="?", const=None, type=str)
     parser.add_argument("--channels", nargs="+", const=None, type=int)
