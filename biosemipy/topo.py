@@ -5,7 +5,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle, Ellipse, Wedge
-import matplotlib.animation as animation
 from scipy.spatial import ConvexHull
 from scipy.interpolate import Rbf
 
@@ -27,7 +26,6 @@ class Topo:
         title=True,
         title_kwargs={},
     ):
-
         self.read_layout(layout_file)
         self.outline = self.generate_outline()
         self.z_scale = z_scale
@@ -50,7 +48,6 @@ class Topo:
         self._setup()
 
     def _setup(self):
-
         plt.axis("equal")
         plt.axis("off")
         plt.xlim(-1.15, 1.15)
@@ -160,6 +157,10 @@ class Topo:
         self.data = x, y, interp(x, y)
 
     def draw_roi_outline(self, rois=None, color="black", border_size=0.1):
+        """Draw region-of-interest (roi) outlines"""
+
+        if not rois:
+            return
 
         # points forming a circle
         border_points = np.arange(0, 2 * np.pi + np.pi / 30, 2 * np.pi / 30)
@@ -250,7 +251,6 @@ class Topo:
         self.cb.set_label(label, rotation=-90)
 
     def plot_contour_lines(self, **kwargs):
-
         # some default kwargs to plt.contour
         if "levels" not in kwargs:
             kwargs["levels"] = 10
@@ -270,7 +270,6 @@ class Topo:
             line.set_clip_path(self.outline["head"])
 
     def plot_title(self, **kwargs):
-
         title = ""
         if "title" in kwargs:
             title = kwargs["title"]
@@ -293,7 +292,6 @@ class Topo:
         colorbar_kwargs={},
         contour_lines_kwargs={},
     ):
-
         # interpolate and plot
         self.interp_data(data)
         if z_scale is not None:
@@ -324,7 +322,6 @@ class Topo:
 
 
 def run_examples():
-
     # Example 1
     topo = Topo()
     topo.show()

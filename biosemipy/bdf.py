@@ -45,11 +45,11 @@ class BDF:
         """Print out some useful information."""
 
         name = f"Filename: {self.fname}"
-        n_chans = f"Number of Channels: {self.hdr['n_chans']}" 
-        labels = f"Channel Labels: {self.hdr['labels']}" 
+        n_chans = f"Number of Channels: {self.hdr['n_chans']}"
+        labels = f"Channel Labels: {self.hdr['labels']}"
         freq = f"Sampling Frequency: {self.freq}"
-        n_recs = f"Number Records: {self.hdr['n_recs']}" 
-        n_samps = f"Number Samples: {self.freq * self.hdr['n_recs']}" 
+        n_recs = f"Number Records: {self.hdr['n_recs']}"
+        n_samps = f"Number Samples: {self.freq * self.hdr['n_recs']}"
 
         return f"{name}\n{n_chans}\n{labels}\n{freq}\n{n_recs}\n{n_samps}"
 
@@ -200,7 +200,6 @@ class BDF:
         assert crop_type in ["triggers", "records"], "crop_type not recognized"
 
         if crop_type == "triggers":
-
             # find trigger value index
             if val[0] == 0:  # from start of file
                 trig_start = 0
@@ -222,7 +221,6 @@ class BDF:
             idx_end = np.where(borders <= idx_end)[0][-1] * self.freq
 
         elif crop_type == "records":
-
             # find trigger value index
             idx_start = ((val[0] - 1) * self.freq) + 1
             idx_end = val[1] * self.freq
@@ -440,12 +438,11 @@ def _bdf2matrix(bdf_dat, chans, scale, n_chans, n_recs, n_samps):
             if chans[chan]:
                 if chan < (n_chans - 1):
                     for samp in range(n_samps):
+                        val1 = np.int32(bdf_dat[pos]) << 8
+                        val2 = np.int32(bdf_dat[pos + 1]) << 16
+                        val3 = np.int32(bdf_dat[pos + 2]) << 24
+                        val = (val1 | val2 | val3) >> 8
 
-                        val1 = np.int32(bdf_dat[pos])  << 8
-                        val2 = np.int32(bdf_dat[pos + 1]) << 16 
-                        val3 = np.int32(bdf_dat[pos + 2]) << 24 
-                        val = ((val1 | val2 | val3) >> 8) 
-        
                         if val >= 2**23:
                             val -= 2**24
 
