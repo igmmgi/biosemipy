@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QApplication,
     QDialog,
     QDialogButtonBox,
@@ -23,7 +23,7 @@ class EventsTable(QDialog):
             event_table.setItem(idx, 0, QTableWidgetItem(str(item[0])))
             event_table.setItem(idx, 1, QTableWidgetItem(str(item[1])))
 
-        button_box = QDialogButtonBox(QDialogButtonBox.Ok)
+        button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok)
         button_box.accepted.connect(self.accept)
 
         layout = QVBoxLayout()
@@ -39,7 +39,7 @@ def main():
     app = QApplication(sys.argv)
     events = EventsTable({"1": 1, "2": 2})
     events.show()
-    if events.exec_():
+    if events.exec():
         pass
     sys.exit(app.quit())
 

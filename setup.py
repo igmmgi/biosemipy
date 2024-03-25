@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="biosemipy",
-    version="0.0.9",
+    version="0.1.0",
     description="Code to read BioSemi BDF EEG files",
     author="IGM",
     packages=["biosemipy"],
@@ -14,7 +14,7 @@ setup(
         "pandas",
         "pyqtgraph",
         "pyopengl",
-        "PyQt5",
+        "PyQt6",
         "scipy",
     ],
     zip_safe=False,

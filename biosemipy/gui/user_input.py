@@ -1,12 +1,11 @@
 import sys
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QApplication,
     QDialog,
     QLineEdit,
     QFormLayout,
     QLabel,
     QDialogButtonBox,
-    QVBoxLayout,
 )
 
 
@@ -15,7 +14,9 @@ class UserInput(QDialog):
 
         QDialog.__init__(self, parent)
 
-        button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        button_box = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        )
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
 
@@ -39,7 +40,7 @@ def main():
     app = QApplication(sys.argv)
     user_input = UserInput("Question?")
     user_input.show()
-    if user_input.exec_():
+    if user_input.exec():
         user_input.get_selection()
     sys.exit(app.quit())
 

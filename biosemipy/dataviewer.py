@@ -1,6 +1,7 @@
 """
 DataViewer: PyQt5-based gui for viewing *.bdf files
 """
+
 import argparse
 import os
 import sys
@@ -9,12 +10,11 @@ from functools import partial
 
 import numpy as np
 import pyqtgraph as pg
-from PyQt5 import QtGui
-from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import (
+from PyQt6 import QtGui
+from PyQt6.QtCore import QTimer
+from PyQt6.QtWidgets import (
     QApplication,
     QAbstractItemView,
-    QAction,
     QFileDialog,
     QInputDialog,
     QMainWindow,
@@ -169,10 +169,13 @@ class DataViewer(QMainWindow):
         """Window close button clicked."""
 
         close = QMessageBox.question(
-            self, "QUIT", "Sure?", QMessageBox.Yes | QMessageBox.No
+            self,
+            "QUIT",
+            "Sure?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
 
-        event.accept() if close == QMessageBox.Yes else event.ignore()
+        event.accept() if close == QMessageBox.StandardButton.Yes else event.ignore()
 
     def read_bdf_file(self):
         """Read *.bdf file."""
@@ -338,69 +341,69 @@ class DataViewer(QMainWindow):
         menu_bar = self.menuBar()
         menu_bar.clear()
 
-        read_bdf_action = QAction("&Read BDF File", self)
+        read_bdf_action = QtGui.QAction("&Read BDF File", self)
         read_bdf_action.triggered.connect(self.select_bdf_file)
 
         file_menu = menu_bar.addMenu("&File")
         file_menu.addAction(read_bdf_action)
 
-        merge_file_action = QAction("&Merge BDF Files", self)
+        merge_file_action = QtGui.QAction("&Merge BDF Files", self)
         merge_file_action.triggered.connect(self._on_merge_file_clicked)
         file_menu.addAction(merge_file_action)
 
         if not file_loaded:
             return
 
-        read_layout_file_action = QAction("&Read Layout File", self)
+        read_layout_file_action = QtGui.QAction("&Read Layout File", self)
         read_layout_file_action.triggered.connect(self.select_layout_file)
 
-        write_file_action = QAction("&Write BDF File", self)
+        write_file_action = QtGui.QAction("&Write BDF File", self)
         write_file_action.triggered.connect(self._on_write_file_clicked)
 
-        crop_file_action = QAction("&Crop BDF File", self)
+        crop_file_action = QtGui.QAction("&Crop BDF File", self)
         crop_file_action.triggered.connect(self._on_crop_file_clicked)
 
-        decimate_file_action = QAction("&Decimate BDF File", self)
+        decimate_file_action = QtGui.QAction("&Decimate BDF File", self)
         decimate_file_action.triggered.connect(self._on_decimate_file_clicked)
 
-        file_info_action = QAction("&File Information", self)
+        file_info_action = QtGui.QAction("&File Information", self)
         file_info_action.triggered.connect(self._on_file_info_clicked)
 
-        clear_file_action = QAction("&Clear Plot", self)
+        clear_file_action = QtGui.QAction("&Clear Plot", self)
         clear_file_action.triggered.connect(self._on_clear_file_clicked)
 
-        events_toggle_action = QAction("&Toggle Events", self)
+        events_toggle_action = QtGui.QAction("&Toggle Events", self)
         events_toggle_action.triggered.connect(self._on_toggle_events_clicked)
-        events_info_action = QAction("&Event Info", self)
+        events_info_action = QtGui.QAction("&Event Info", self)
         events_info_action.triggered.connect(self._on_events_info_clicked)
 
-        channel_difference_action = QAction("&Channel Difference", self)
+        channel_difference_action = QtGui.QAction("&Channel Difference", self)
         channel_difference_action.triggered.connect(self._on_channel_difference_action)
 
-        channel_select_action = QAction("&Channel Selection", self)
+        channel_select_action = QtGui.QAction("&Channel Selection", self)
         channel_select_action.triggered.connect(self._on_channel_select_action)
 
-        channel_delete_action = QAction("&Channel Deletion", self)
+        channel_delete_action = QtGui.QAction("&Channel Deletion", self)
         channel_delete_action.triggered.connect(self._on_channel_delete_action)
 
-        channel_rereference_action = QAction("&Re-reference", self)
+        channel_rereference_action = QtGui.QAction("&Re-reference", self)
         channel_rereference_action.triggered.connect(
             self._on_channel_rereference_action
         )
 
-        theme_action = QAction("&Invert Theme", self)
+        theme_action = QtGui.QAction("&Invert Theme", self)
         theme_action.triggered.connect(self._invert_theme)
 
-        colourmap_select_action = QAction("&Colourmap", self)
+        colourmap_select_action = QtGui.QAction("&Colourmap", self)
         colourmap_select_action.triggered.connect(self._select_colourmap)
 
-        font_size_action = QAction("&Font Size", self)
+        font_size_action = QtGui.QAction("&Font Size", self)
         font_size_action.triggered.connect(self._select_font_size)
 
-        line_size_action = QAction("&Line Width", self)
+        line_size_action = QtGui.QAction("&Line Width", self)
         line_size_action.triggered.connect(self._select_line_width)
 
-        topoplot_action = QAction("&Topoplot", self)
+        topoplot_action = QtGui.QAction("&Topoplot", self)
         topoplot_action.triggered.connect(self.plot_topography)
 
         file_menu.addAction(read_layout_file_action)
@@ -413,9 +416,9 @@ class DataViewer(QMainWindow):
 
         data_menu = menu_bar.addMenu("&Filter")
 
-        remove_filter_action = QAction("&Remove Filter", self)
-        low_pass_filter_action = QAction("&Low-Pass Filter", self)
-        high_pass_filter_action = QAction("&High-Pass Filter", self)
+        remove_filter_action = QtGui.QAction("&Remove Filter", self)
+        low_pass_filter_action = QtGui.QAction("&Low-Pass Filter", self)
+        high_pass_filter_action = QtGui.QAction("&High-Pass Filter", self)
         remove_filter_action.triggered.connect(self._on_remove_filter_action)
         low_pass_filter_action.triggered.connect(self._on_low_pass_filter_action)
         high_pass_filter_action.triggered.connect(self._on_high_pass_filter_action)
@@ -471,7 +474,7 @@ class DataViewer(QMainWindow):
 
         selection = UserInput("High-pass filter frequency?", parent=self)
         selection.show()
-        if selection.exec_():
+        if selection.exec():
             freq = selection.get_selection()
             b, a = signal.butter(2, (float(freq) / (self.bdf.freq / 2)), "high")
             self.data = signal.filtfilt(b, a, self.data)
@@ -482,7 +485,7 @@ class DataViewer(QMainWindow):
 
         selection = UserInput("Low-pass filter frequency?", parent=self)
         selection.show()
-        if selection.exec_():
+        if selection.exec():
             freq = selection.get_selection()
             b, a = signal.butter(6, (float(freq) / (self.bdf.freq / 2)), "low")
             self.data = signal.filtfilt(b, a, self.data)
@@ -493,7 +496,7 @@ class DataViewer(QMainWindow):
 
         selection = Decimate([2, 4, 8], parent=self)
         selection.show()
-        if selection.exec_():
+        if selection.exec():
             factor = selection.get_selection()
 
             self.fname = f"{self.fname[:-4]}_dec.bdf"
@@ -513,7 +516,7 @@ class DataViewer(QMainWindow):
 
         selection = Crop(self.events["count"], self.bdf.hdr["n_recs"], parent=self)
         selection.show()
-        if selection.exec_():
+        if selection.exec():
             crop_type, val1, val2 = selection.get_selection()
 
             self.fname = f"{self.fname[:-4]}_crop.bdf"
@@ -531,7 +534,7 @@ class DataViewer(QMainWindow):
 
         selection = ChannelSelection(self.labels_selected, parent=self)
         selection.show()
-        if selection.exec_():
+        if selection.exec():
             chans = selection.get_selection()
 
             self.bdf.select_channels(chans)
@@ -552,7 +555,7 @@ class DataViewer(QMainWindow):
 
         selection = ChannelSelection(self.labels_selected, parent=self)
         selection.show()
-        if selection.exec_():
+        if selection.exec():
             chans = selection.get_selection()
 
             self.bdf.delete_channels(chans)
@@ -574,7 +577,7 @@ class DataViewer(QMainWindow):
         labels = ["Avg"] + self.labels_selected
         selection = ChannelSelection(labels, parent=self)
         selection.show()
-        if selection.exec_():
+        if selection.exec():
             chans = selection.get_selection()
 
             if "Avg" in chans:
@@ -596,7 +599,7 @@ class DataViewer(QMainWindow):
 
         selection = ChannelDifference(self.labels_selected, parent=self)
         selection.show()
-        if selection.exec_():
+        if selection.exec():
             chan1, chan2, label = selection.get_selection()
 
             self.bdf.channel_difference([chan1], [chan2], label)
@@ -729,7 +732,9 @@ class DataViewer(QMainWindow):
     def _set_selection_labels(self):
         """Set labels listed in label selection box."""
 
-        self.gui.channel_selection.setSelectionMode(QAbstractItemView.MultiSelection)
+        self.gui.channel_selection.setSelectionMode(
+            QAbstractItemView.SelectionMode.MultiSelection
+        )
         self.gui.channel_selection.clear()
         if self.labels_selected:
             for label in self.labels_selected:
@@ -1251,7 +1256,7 @@ def run(fname=None):
     app = QApplication(sys.argv)
     ex = DataViewer(fname=fname, channels=args.channels, layout_file=args.layout_file)
     ex.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 
 
 if __name__ == "__main__":

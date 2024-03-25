@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QApplication,
     QDialog,
     QDialogButtonBox,
@@ -20,7 +20,9 @@ class Decimate(QDialog):
         for factor in factors:
             self.selection_box.addItem(str(factor))
 
-        button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        button_box = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        )
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
 
@@ -46,7 +48,7 @@ def main():
     app.setApplicationName("Decimate")
     decimate_selection = Decimate([2, 4, 8])
     decimate_selection.show()
-    if decimate_selection.exec_():
+    if decimate_selection.exec():
         decimate_selection.get_selection()
     sys.exit(app.quit())
 

@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QApplication,
     QDialog,
     QDialogButtonBox,
@@ -25,7 +25,9 @@ class Crop(QDialog):
 
         self.selection_box.currentIndexChanged.connect(self.set_available_crop_values)
 
-        button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        button_box = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        )
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
 
@@ -84,7 +86,7 @@ def main():
     app.setApplicationName("Channel Selection")
     crop_selection = Crop([1, 2, 3, 4], 100)
     crop_selection.show()
-    if crop_selection.exec_():
+    if crop_selection.exec():
         crop_selection.get_selection()
     sys.exit(app.quit())
 

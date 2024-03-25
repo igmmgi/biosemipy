@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QApplication,
     QDialog,
     QGroupBox,
@@ -32,7 +32,9 @@ class ChannelDifference(QDialog):
 
         channels.setLayout(layout)
 
-        button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        button_box = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        )
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
 
@@ -59,7 +61,7 @@ def main():
     app = QApplication(sys.argv)
     channel_difference = ChannelDifference(["a1", "b1", "a2", "b2"])
     channel_difference.show()
-    if channel_difference.exec_():
+    if channel_difference.exec():
         channel_difference.get_selection()
     sys.exit(app.quit())
 

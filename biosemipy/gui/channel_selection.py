@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QApplication,
     QDialog,
     QDialogButtonBox,
@@ -15,11 +15,15 @@ class ChannelSelection(QDialog):
         QDialog.__init__(self, parent)
 
         self.selection_box = QListWidget()
-        self.selection_box.setSelectionMode(QAbstractItemView.MultiSelection)
+        self.selection_box.setSelectionMode(
+            QAbstractItemView.SelectionMode.MultiSelection
+        )
         for label in labels:
             self.selection_box.addItem(label)
 
-        button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        button_box = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        )
         button_box.accepted.connect(self.accept)
         button_box.rejected.connect(self.reject)
 
@@ -47,7 +51,7 @@ def main():
     app = QApplication(sys.argv)
     channel_selection = ChannelSelection(["a1", "b1", "a2", "b2"])
     channel_selection.show()
-    if channel_selection.exec_():
+    if channel_selection.exec():
         channel_selection.get_selection()
     sys.exit(app.quit())
 

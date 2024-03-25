@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import (
+from PyQt6.QtWidgets import (
     QApplication,
     QDialog,
     QPlainTextEdit,
@@ -16,7 +16,7 @@ class DisplayText(QDialog):
         text_box = QPlainTextEdit(self)
         text_box.insertPlainText(txt)
 
-        button_box = QDialogButtonBox(QDialogButtonBox.Ok)
+        button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok)
         button_box.accepted.connect(self.accept)
 
         layout = QVBoxLayout()
@@ -32,7 +32,7 @@ def main():
     app = QApplication(sys.argv)
     display_text = DisplayText("Dispaly Text", "text")
     display_text.show()
-    if display_text.exec_():
+    if display_text.exec():
         pass
     sys.exit(app.quit())
 
