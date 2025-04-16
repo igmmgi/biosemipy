@@ -3,12 +3,6 @@
 Python code for BioSemi 24 bit EEG files. A dataviewer written using PyQt6/pyqtgraph
 allows visualisation of the \*.bdf files.
 
-## Installation
-
-git clone <https://github.com/igmmgi/biosemipy.git>
-
-pip install -e biosemipy
-
 ### biosemipy.bdf
 
 read \

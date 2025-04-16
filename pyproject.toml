@@ -1,0 +1,21 @@
+[project]
+name = "biosemipy"
+version = "0.1.1"
+description = "Code to read/ddisplay BioSemi BDF EEG files"
+readme = "README.md"
+authors = [{ name = "igmmgi", email = "ian.mackenzie@uni-tuebingen.de" }]
+requires-python = ">=3.10"
+dependencies = [
+  "matplotlib>=3.10.1",
+  "numba>=0.61.2",
+  "numpy>=2.2.4",
+  "pandas>=2.2.3",
+  "pyopengl>=3.1.9",
+  "pyqt6>=6.9.0",
+  "pyqtgraph>=0.13.7",
+  "scipy>=1.15.2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
